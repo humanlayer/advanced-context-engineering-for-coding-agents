@@ -4,7 +4,7 @@ Hey folks, dex here.
 
 You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) post, as the coiner of the term "context engineering" or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
 
-I'm stoked to share with y'all we've been up to since then and why it matters to every team that's serious about software.
+I'm stoked to share with what we've been up to since then and why it matters to every team that's serious about software, and get feedback from the community here.
 
 **Note** - if you prefer video - this post is based on [a talk that was recorded at YC](https://hlyr.dev/ace) on Aug 20th
 
@@ -32,14 +32,14 @@ This matched what I heard talking with founders:
 * “Doesn’t work in big repos.”
 * “Doesn’t work for complex systems.”
 
-The general vibe on Ai-coding for hard stuff tends to be
+The general vibe on AI-coding for hard stuff tends to be
 
 > Maybe someday, when models are smarter…
 
 Heck even [Amjad](https://x.com/amasad) was on a [lenny's podcast 9 months ago](https://www.lennysnewsletter.com/p/behind-the-product-replit-amjad-masad) talking about how PMs use Replit agent to prototype new stuff and then they hand it off to engineers to implement for production.
 (Disclaimer: i haven't caught up with him recently (ok, ever), this stance may have changed)
 
-Whenever I hear "Maybe someday when the models are smart" I leap to exclaim **that’s what context engineering is all about**: getting the most out of *today’s* models. 
+Whenever I hear "Maybe someday when the models are smart" I generally leap to exclaim **that’s what context engineering is all about**: getting the most out of *today’s* models. 
 
 While obsessing over these talks and llms and context for the last few months, I think we found something really cool.
 
@@ -125,11 +125,11 @@ As we went deep on in [12-factor agents](https://hlyr.dev/12fa), LLMs are statel
 
 This is just as true for [wielding](https://www.youtube.com/watch?v=F_RyElT_gJk) coding agents as it is for general agent design, you just have a smaller problem space, and rather than building agents, we're talking about using agents. 
 
-At any give point, a turn in an agent like claude code is a stateless function call. Context window in, next step out. 
+At any given point, a turn in an agent like claude code is a stateless function call. Context window in, next step out. 
 
 <img width="1334" height="747" alt="Screenshot 2025-08-29 at 11 11 08 AM" src="https://github.com/user-attachments/assets/471ecb31-5502-4100-8371-112dee75ac76" />
 
-That is, the contents of your context window are the ONLY lever you have to affect the quality of your output. So yeah, **it's worth obessing over**.
+That is, the contents of your context window are the ONLY lever you have to affect the quality of your output. So yeah, it's worth obsessing over.
 
 You should optimize your context window for:
 
@@ -274,7 +274,7 @@ Remember that part in the example where I read the research and threw it out cau
 
 There's a certain type of person who is always looking for the one magic prompt that will solve all their problems. It doesn't exist.
 
-Frequent Intention Compaction via a research/plan/implement flow will make your performance better, but what makes it good is that you build high-leverage human review into your pipeline.
+Frequent Intentional Compaction via a research/plan/implement flow will make your performance better, but what makes it good is that you build high-leverage human review into your pipeline.
 
 <img width="1331" height="748" alt="Screenshot 2025-08-29 at 11 16 08 AM" src="https://github.com/user-attachments/assets/f12a10e2-7ffe-44c5-9d9a-b6e42ff5251e" />
 
@@ -302,23 +302,22 @@ When you review the research and the plans
 
 People have a lot of different opinions on what code review is for.
 
-I prefer [Blake Smith's framing in Code Review Essesentials for Software Teams](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html), where he says the most important part of code review is mental alignment - keeping members of the team on the page as to how the code is changing and why.
+I prefer [Blake Smith's framing in Code Review Essentials for Software Teams](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html), where he says the most important part of code review is mental alignment - keeping members of the team on the page as to how the code is changing and why.
 
 <img width="500" height="647" alt="image" src="https://github.com/user-attachments/assets/4c873d29-5dd7-4ed1-82e7-332e871b1d12" />
 
-Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the **lack of mental alignment**.
-I was completely losing touch with what our product was and how it worked. 
-Anyone who's worked with a very productive AI coder has had this experience.
+Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the lack of mental alignment. I was starting to lose touch with what our product was and how it worked. 
+I would expect that anyone who's worked with a very productive AI coder has had this experience.
 
 This is actually the most important part of research/plan/implement to us. 
-A guaranteed side effect of everyone shipping way more code and complexity is that a much larger proportion of your codebase is going to be unfamiliar to any given engineer at any point in time.
+A guaranteed side effect of everyone shipping way more code is that a much larger proportion of your codebase is going to be unfamiliar to any given engineer at any point in time.
 
-I won't even try to convince you that research/plan/implement is the *right approach for most teams* - it probably isn't. But you ABSOLUTELY need an engineering process that 
+I won't even try to convince you that research/plan/implement is the right approach for most teams - it probably isn't. But you ABSOLUTELY need an engineering process that 
 
 1. keeps team members on the same page
 2. enables team members to quickly learn about unfamiliar parts of the codebase
 
-For most teams, this is pull requests and internal docs. For us it's now specs, plans, and research.
+For most teams, this is pull requests and internal docs. For us, it's now specs, plans, and research.
 
 I can't read 2000 lines of golang daily. But I *can* read 200 lines of a well-written implementation plan.
 
@@ -338,7 +337,7 @@ Basically we got everything we needed.
 So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that this does not work perfectly for every problem. 
 In August the whole team spent 2 weeks spinning circles on a really tricky race condition that spiraled into a rabbit hole of issues with MCP sHTTP keepalives in golang and a whole bunch of other race-y nonsense. 
 
-But in general, I know this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was genuinely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. And if you haven't met Vaibhav, he's one of the most fastidious engineers I know when it comes to code design and quality.
+But that's the exception now. In general, this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was genuinely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. (And if you haven't met Vaibhav, he's one of the most meticulous engineers I know when it comes to code design and quality)
 
 ### What's coming
 
@@ -346,7 +345,7 @@ I'm reasonably confident that coding agents will be commoditized.
 
 The hard part will be the team and workflow transformation. Everything about collaboration will change in a world where AI writes 99% of our code.
 
-And I belive pretty strongly that if you don't figure this out, you're gonna get lapped by someone who did. 
+And I believe pretty strongly that if you don't figure this out, you're gonna get lapped by someone who did. 
 
 ### okay so clearly you have something to sell me
 
@@ -358,7 +357,7 @@ On Tuesday, we're launching CodeLayer, our new "post-IDE IDE" in private beta - 
 
 ## For Engineering Leaders
 
-If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're are forward-deploying with everyone from 6-person startups to 1000-employee public companies to help teams make the culture/process/tech shift to transition to the ai-first coding world.
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with everyone from 6-person startups to 1000-employee public companies to help teams make the culture/process/tech shift to transition to the ai-first coding world.
 
 ### Thanks
 

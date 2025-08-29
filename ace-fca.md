@@ -342,45 +342,26 @@ But in general, I know this works well for us. Our intern shipped 2 PRs on his f
 
 ### What's coming
 
-I'm fairly confident that coding agents will be commoditized.
+I'm reasonably confident that coding agents will be commoditized.
 
 The hard part will be the team and workflow transformation. Everything about collaboration will change in a world where AI writes 99% of our code.
 
-I belive pretty strongly that if you don't figure this out, you're gonna get lapped by someone who did. 
+And I belive pretty strongly that if you don't figure this out, you're gonna get lapped by someone who did. 
 
 ### okay so clearly you have something to sell me
 
-We're so bullish on spec-first, agentic workflows that we're building tools to make it easier for everyone. Among many things, I'm obsessed with the problem of scaling these "frequent intentional compaction" workflows collaboratively across large teams. 
+We're pretty bullish on spec-first, agentic workflows, so we're building tools to make it easier. Among many things, I'm obsessed with the problem of scaling these "frequent intentional compaction" workflows collaboratively across large teams. 
 
-On Tuesday, we're launching CodeLayer, our new "post-IDE IDE" in private beta. If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
+On Tuesday, we're launching CodeLayer, our new "post-IDE IDE" in private beta - think "Superhuman for claude code". If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
 
-**Sign up at [https://hlyr.dev/code](https://hlyr.dev/code)**. When you sign up, you'll get an email, if you reply to that with your YC verification link, we'll jump you to the front of the line.
+**Sign up at [https://hlyr.dev/code](https://hlyr.dev/code)**.
 
 ## For Engineering Leaders
 
-If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're doing a forward-deployed offering where we help you tackle the organizational hurdles to make ai-first coding work at scale. I'll also be diving deep on this stuff at the [YC CTO summit](https://bookface.ycombinator.com/posts/92305).
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're are forward-deploying with everyone from 6-person startups to 1000-employee public companies to help teams make the culture/process/tech shift to transition to the ai-first coding world.
 
 ### Thanks
 
-- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrew, a bunch more I'm too tired to name out right now. Drop a comment and I'll add you
+- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrewchurchill, a bunch more I'm too tired to name out right now. Drop a comment and I'll add you
 - Thanks Sundeep for weathering this wacky storm 
 - Thanks Allison, Geoff, and Gerred for dragging us kicking and screaming into the future
-
-
-### Comments - Other people are writing about this
-
-- bf posts
-- geoff posts
-
-All other links:
-
-- 
-
-
-### Comments - Whats happening to humanlayer?
-
-We closed off new HumanLayer signups about a month ago. This was a hard decision to make but I've got so much conviction in the new thing that it doesn't make sense to keep supporting two products. We'll be working with our current customers to migrate off, and will likely end up open sourcing large parts of the old codebase (or maybe you can point ralph at the [llms-full.txt](https://www.humanlayer.dev/docs/llms-full.txt) and reverse engineer it from specs 🙂)
-
-grateful to @nick and the mandel team for being one of our earlist champions and the first to deploy to production. Shouts out to all the other founders in our batch who tried humanlayer, messed with the intergrations, gave us feedback, sent us bug reports, and helped us grind along our search for PMF.
-
-If you want to learn more about why I lost conviction in humanlayer the product, and why I'm tending bearish on horizontal agent infra in general these days, hit me up and happy to share, otherwise I'll save that story for another post 🙂

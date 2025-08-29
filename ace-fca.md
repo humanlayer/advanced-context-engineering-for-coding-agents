@@ -287,8 +287,6 @@ A bad line of code is… a bad line of code.
 But a bad line of **plan** = hundreds of bad lines of code.
 And a bad line of **research** = thousands.
 
-<img width="225" height="728" alt="Screenshot 2025-08-29 at 11 16 26 AM" src="https://github.com/user-attachments/assets/398ac859-80c6-4791-8c61-4c13198ee6f6" />
-<img width="1333" height="749" alt="Screenshot 2025-08-29 at 11 16 47 AM" src="https://github.com/user-attachments/assets/85b6a4c1-71e1-4deb-afef-5a797944a3ac" />
 <img width="1333" height="746" alt="Screenshot 2025-08-29 at 11 17 00 AM" src="https://github.com/user-attachments/assets/54a09c99-b177-41b2-a43d-04d6b94bc56e" />
 
 So you want to **focus human effort and attention** on the HIGHEST LEVERAGE parts of the pipeline.

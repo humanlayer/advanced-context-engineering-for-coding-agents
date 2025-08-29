@@ -4,7 +4,7 @@ Hey folks, dex here.
 
 You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) post, as the coiner of the term "context engineering" or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
 
-I'm stoked to share with y'all and get feedback on what we've been up to since then and why it matters to [every team that's serious about software](https://bookface.ycombinator.com/posts/86990).
+I'm stoked to share with y'all we've been up to since then and why it matters to every team that's serious about software.
 
 **Note** - if you prefer video - this post is based on [a talk that was recorded at YC](https://hlyr.dev/ace) on Aug 20th
 
@@ -46,7 +46,7 @@ While obsessing over these talks and llms and context for the last few months, I
 ### Our weird journey to get here
 
 I was working with one of the most productive AI coders I've ever met. 
-Every few days they'd drop **2000-line Go PRs** — not CRUD apps, but systems code with race conditions and shutdown order issues.  
+Every few days they'd drop **2000-line Go PRs**.
 And this wasn't a nextjs app or a CRUD API. This was complex, [race-prone systems code](https://github.com/humanlayer/humanlayer/blob/main/hld/daemon/daemon_subscription_integration_test.go#L45) that did JSON RPC over unix sockets and managed streaming stdio from forked unix processes (mostly claude code sdk processes, more on that later 🙂).
 
 The idea of carefully reading 2,000 lines of complex Go code every few days was simply not sustainable. 
@@ -335,10 +335,10 @@ Basically we got everything we needed.
 
 (oh, and yeah, our team of three is averaging about $12k on opus per month)
 
-So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that does not work perfectly for every problem. 
+So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that this does not work perfectly for every problem. 
 In August the whole team spent 2 weeks spinning circles on a really tricky race condition that spiraled into a rabbit hole of issues with MCP sHTTP keepalives in golang and a whole bunch of other race-y nonsense. 
 
-But in general, I know this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was geniunely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. And if you haven't met Vaibhav, he's one of the most fastidious engineers I know when it comes to code design and quality.
+But in general, I know this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was genuinely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. And if you haven't met Vaibhav, he's one of the most fastidious engineers I know when it comes to code design and quality.
 
 ### What's coming
 

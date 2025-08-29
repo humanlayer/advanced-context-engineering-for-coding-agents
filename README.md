@@ -20,7 +20,14 @@
 >
 > Want to see it in action? [Watch us fix a bug in 300k LOC Rust codebase](https://hlyr.dev/he-yt)
 
-<img width="1326" height="751" alt="Screenshot 2025-08-29 at 10 55 32 AM" src="https://github.com/user-attachments/assets/06f03232-f9d9-4a92-a182-37056bf877a4" />
+> [!WARNING]
+> Hey - this is a WIP. In case you stumble on it.
+>
+> I will polish all the AI slop soon.
+>
+> -dex
+
+<img width="937" height="547" alt="Screenshot 2025-08-29 at 3 57 10 PM" src="https://github.com/user-attachments/assets/83fec7c5-5cb0-4646-8ec6-5ad02cbc4f20" />
 
 Hi, I'm dex. You might remember me from [12-factor agents](https://hlyr.dev/12fa), coining "context engineering," or [the AI Engineer talk](https://www.youtube.com/watch?v=8kMaTybvDUw).
 

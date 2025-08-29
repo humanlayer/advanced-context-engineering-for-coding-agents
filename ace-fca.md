@@ -1,0 +1,386 @@
+# Advanced Context Engineering for Coding Agents: Getting AI to solve complex problems in brownfield codebases
+
+Hey folks, dex here.
+
+You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) post, as the coiner of the term "context engineering" or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
+
+I'm stoked to share with y'all and get feedback on what we've been up to since then and why it matters to [every team that's serious about software](https://bookface.ycombinator.com/posts/86990).
+
+**Note** - if you prefer video - this post is based on [a talk that was recorded at YC](https://hlyr.dev/ace) on Aug 20th
+
+### From 12-factor agents to context engineering for coding agents
+
+I have 2 favorite talks from AI Engineer 2025. (incidentally, the only two AIE talks with [more views than 12-factor agents](https://www.youtube.com/@aiDotEngineer/videos))
+
+The first is [Sean Grove's talk on "Specs are the new code"](https://www.youtube.com/watch?v=8rABwKRsec4) and the second is [the Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk).
+
+Sean argued that we’re all *vibe coding wrong*. The idea of chatting with an AI agent for two hours, specifying what you want, and then throwing away all the prompts while committing only the final code… is like a Java developer compiling a JAR and checking in the compiled binary while throwing away the source. 
+
+Sean proposes that in the AI future, the specs will become the real code. That in two years, you'll be opening python files in your IDE with about the same frequency that, today, you might open up a hex editor to read assembly (which, for most of us, is never).
+
+Yegor's talk on developer productivity tackled an orthogonal problem. They analyzed commits from 100k developers and found, among other things,
+
+1. That AI tools often lead to a lot of rework, diminishing the perceived productivity gains
+2. That AI tools work well for greenfield projects, but are often counter-productive for brownfield codebases and complex tasks
+
+<img width="1326" height="751" alt="Screenshot 2025-08-29 at 10 55 32 AM" src="https://github.com/user-attachments/assets/06f03232-f9d9-4a92-a182-37056bf877a4" />
+
+This matched what I heard talking with founders:
+
+* “Too much slop.”
+* “Tech debt factory.”
+* “Doesn’t work in big repos.”
+* “Doesn’t work for complex systems.”
+
+The general vibe on Ai-coding for hard stuff tends to be
+
+> Maybe someday, when models are smarter…
+
+Heck even [Amjad](https://x.com/amasad) was on a [lenny's podcast 9 months ago](https://www.lennysnewsletter.com/p/behind-the-product-replit-amjad-masad) talking about how PMs use Replit agent to prototype new stuff and then they hand it off to engineers to implement for production.
+(Disclaimer: i haven't caught up with him recently (ok, ever), this stance may have changed)
+
+Whenever I hear "Maybe someday when the models are smart" I leap to exclaim **that’s what context engineering is all about**: getting the most out of *today’s* models. 
+
+While obsessing over these talks and llms and context for the last few months, I think we found something really cool.
+
+### Our weird journey to get here
+
+I was working with one of the most productive AI coders I've ever met. 
+Every few days they'd drop **2000-line Go PRs** — not CRUD apps, but systems code with race conditions and shutdown order issues.  
+And this wasn't a nextjs app or a CRUD API. This was complex, [race-prone systems code](https://github.com/humanlayer/humanlayer/blob/main/hld/daemon/daemon_subscription_integration_test.go#L45) that did JSON RPC over unix sockets and managed streaming stdio from forked unix processes (mostly claude code sdk processes, more on that later 🙂).
+
+The idea of carefully reading 2,000 lines of complex Go code every few days was simply not sustainable. 
+We had no choice but to adopt **spec-driven development**.
+
+It was uncomfortable at first. 
+I had to learn to let go of reading every line of PR code. 
+I still read the tests pretty carefully, but the specs became our source of truth for what was being built and why.
+
+The transformation took about 8 weeks. 
+It was incredibly uncomfortable for everyone involved, not least of all for me. 
+But now we're flying. A few weeks back, I shipped 6 PRs in a day. 
+I can count on one hand the number of times I've opened a non-markdown file in an editor in the last two months.
+
+## Advanced Context Engineering for Coding Agents
+
+What we needed was:
+
+* AI that Works Well in Brownfield Codebases
+* AI that Solves Complex Problems
+* No Slop
+* Maintain Mental Alignment across the team
+
+(And yeah sure, let's try to spend as many tokens as possible.)
+
+I'll dive into:
+
+1. what we learned applying context engineering to coding agents
+2. the dimensions along which using these agents is a deeply technical craft
+3. why I don't believe these approaches are generalizable
+4. the number of times I've been repeatedly proven wrong about (3)
+
+### But first: The Naive Way to manage agent context
+
+Most of us start by using a coding agent like a chatbot. You talk (or shout) back and forth with it, vibing your way through a problem until you either run out of context, give up, or the agent starts apologizing.
+
+<img width="1328" height="741" alt="Screenshot 2025-08-29 at 11 08 34 AM" src="https://github.com/user-attachments/assets/51a46854-c542-4515-afbb-a2fe26970809" />
+
+A slightly smarter way is to just start over when you get off track, discarding your session and starting a new one, perhaps with a little more steering in the prompt. 
+
+> [original prompt], but make sure not to use XYZ approach, that won't work
+
+<img width="1331" height="744" alt="Screenshot 2025-08-29 at 11 08 55 AM" src="https://github.com/user-attachments/assets/c96f9b42-0801-428a-b366-af871d1f97af" />
+
+
+### Slightly Smarter: Intentional Compaction
+
+You have probably done something I've come to call "intentional compaction". Whether you're on track or not, as your context starts to fill up, you probably want to pause your work and start over with a fresh context window. To do this, you might drop a prompt like
+
+> "Write everything we did so far to progress.md, ensure to note the end goal, the approach we're taking, the steps we've done so far, and the current failure we're working on"
+
+<img width="1326" height="736" alt="Screenshot 2025-08-29 at 11 09 29 AM" src="https://github.com/user-attachments/assets/db22fe14-1010-47f4-9080-b132e4851f8c" />
+
+You can also [use commit messages for intentional compaction](https://x.com/dexhorthy/status/1961490837017088051).
+
+### What Exactly Are We Compacting?
+
+What eats up context?
+
+* Searching for files
+* Understanding code flow
+* Applying edits
+* Test/build logs
+* Huge JSON blobs from tools
+
+All of these can flood the context window. **Compaction** is simply distilling them into structured artifacts.
+
+A good output for an intentional compaction might include something like
+
+<img width="1309" height="747" alt="Screenshot 2025-08-29 at 11 10 36 AM" src="https://github.com/user-attachments/assets/a7d5946d-4e81-46e8-b314-d02dae1f00ee" />
+
+
+### Why obsess over context?
+
+As we went deep on in [12-factor agents](https://hlyr.dev/12fa), LLMs are stateless functions. The only thing that affects the quality of your output (without training/tuning models themselves) is the quality of the inputs. 
+
+This is just as true for [wielding](https://www.youtube.com/watch?v=F_RyElT_gJk) coding agents as it is for general agent design, you just have a smaller problem space, and rather than building agents, we're talking about using agents. 
+
+At any give point, a turn in an agent like claude code is a stateless function call. Context window in, next step out. 
+
+<img width="1334" height="747" alt="Screenshot 2025-08-29 at 11 11 08 AM" src="https://github.com/user-attachments/assets/471ecb31-5502-4100-8371-112dee75ac76" />
+
+That is, the contents of your context window are the ONLY lever you have to affect the quality of your output. So yeah, **it's worth obessing over**.
+
+You should optimize your context window for:
+
+1. Correctness
+2. Completeness
+3. Size
+4. Trajectory
+
+Put another way, the worst things that can happen to your context window, in order, are:
+
+1. Incorrect Information
+2. Missing Information
+3. Too much Noise
+
+If you like equations, here's a dumb one you can reference:
+
+<img width="1320" height="235" alt="Screenshot 2025-08-29 at 11 11 30 AM" src="https://github.com/user-attachments/assets/a6ea98a6-665b-48af-983b-a1cb2c45e44c" />
+
+As [Geoff Huntley](https://x.com/GeoffreyHuntley) puts it,
+
+> The name of the game is that you only have approximately **170k of context window** to work with. 
+> So it's essential to use as little of it as possible. 
+> The more you use the context window, the worse the outcomes you'll get.
+
+Geoff's solution to this engineering constraint is a technique he calls [Ralph Wiggum as a Software Engineer](https://ghuntley.com/ralph/), which basically involves running an agent in a while loop forever with a simple prompt.
+
+```
+while :; do
+  cat PROMPT.md | npx --yes @sourcegraph/amp 
+done
+```
+
+If you wanna learn more about ralph or what's in PROMPT.md, you can check out Geoff's post or dive into the project that [@simonfarshid](https://x.com/simonfarshid), [@lantos1618](https://x.com/lantos1618), [@AVGVSTVS96](https://x.com/AVGVSTVS96) and I built at last weekend's YC Agents Hackathon, which was able to (mostly) [port BrowserUse to TypeScript overnight](https://github.com/repomirrorhq/repomirror/blob/main/repomirror.md)
+
+Geoff describes ralph as a "hilariously dumb" solution to the context window problem. [I'm not entirely sure that it is dumb](https://ghuntley.com/content/images/size/w2400/2025/07/The-ralph-Process.png).
+
+### Back to compaction: Using Sub-Agents
+
+Subagents are another way to manage context, and generic subagents (i.e. not [custom](https://docs.anthropic.com/en/docs/claude-code/sub-agents) ones) have been a feature of claude code and many coding CLIs since the early days.
+
+Subagents are not about [playing house and anthropomorphizing roles](https://x.com/dexhorthy/status/1950288431122436597). Subagents are about context control.
+
+<img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 12 38 AM" src="https://github.com/user-attachments/assets/0bf24a03-522d-4f1d-8722-9e0d2250bd60" />
+
+
+The ideal subagent response probably looks similar to the ideal ad-hoc compaction from above
+
+<img width="1309" height="747" alt="Screenshot 2025-08-29 at 11 10 36 AM" src="https://github.com/user-attachments/assets/a7d5946d-4e81-46e8-b314-d02dae1f00ee" />
+
+Getting a subagent to return this is not trivial:
+
+<img width="1327" height="745" alt="Screenshot 2025-08-29 at 11 13 05 AM" src="https://github.com/user-attachments/assets/113e49eb-db7f-444d-b7f6-993112f87591" />
+
+
+### What works even better: Frequent Intentional Compaction
+
+The techniques I want to talk about and that we've adopted in the last few months fall under what I call "frequent intentional compaction".
+
+Essentially, this means designing your ENTIRE WORKFLOW around context management, and keeping utilization in the 40%-60% range (depends on complexity of the problem ).
+
+The way we do it is to split into three (ish) steps. 
+
+I say "ish" because sometimes we skip the research and go straight to planning, and sometimes we'll do multiple passes of compacted research before we're ready to implement. 
+
+I'll share example outputs of each step in a concrete example below. For a given feature or bug, we'll tend to do:
+
+**Research**
+
+Understand the codebase, the files relevant to the issue, and how information flows, and perhaps potential causes of a problem.
+
+here's our [research prompt](https://github.com/humanlayer/humanlayer/blob/main/.claude/commands/research_codebase.md). 
+It currently uses custom subagents, but in other repos I use a more generic version that uses the claude code Task() tool with `general-agent`. 
+The generic one works almost as well.
+
+
+**Plan**
+
+Outline the exact steps we'll take to fix the issue, and the files we'll need to edit and how, being super precise about the testing / verification steps in each phase.
+
+This is the [prompt we use for planning](https://github.com/humanlayer/humanlayer/blob/main/.claude/commands/create_plan.md).
+
+
+**Implement**
+
+Step through the plan, phase by phase. For complex work, I'll often compact the current status back into the original plan file after each implementation phase is verified.
+
+This is the [implementation prompt we use](https://github.com/humanlayer/humanlayer/blob/main/.claude/commands/implement_plan.md).
+
+Aside - if you've been hearing a lot about git worktrees, this is the only step that needs to be done in a worktree. We tend to do everything else on main.
+
+**How we manage/share the markdown files**
+
+I will skip this part for brevity but feel free to launch a claude session in [humanlayer/humanlayer](https://github.com/humanlayer/humanlayer) and ask how the "thoughts tool" works.
+
+### Putting this into practice 
+
+I do a [weekly live-coding session](https://github.com/ai-that-works/ai-that-works) with @vaibhav where we whiteboard and code up a solution to an advanced AI Engineering problem. It's one of the highlights of my week.
+
+A few weeks ago, I [decided to share some more about the process](https://hlyr.dev/he-gh), curious if our in-house techniques could one-shot a fix to a 300k LOC Rust codebase for BAML, a programming language for working with LLMs. I picked out [an (admittedly small-ish) bug](https://github.com/BoundaryML/baml/issues/1252) from the @BoundaryML repo and got to work. 
+
+You can [watch the episode](https://hlyr.dev/he-yt) to learn more about the process, but to outline it:
+
+Worth noting: I am at best an amateur Rust dev, and I have never worked in the BAML codebase before.
+
+#### The research
+
+- I created a piece of research, I read it. Claude decided the bug was invalid and the codebase was correct.
+- I threw that research out and kicked off a new one, with more steering.
+- here is [the final research doc i ended up using](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/research/2025-08-05_05-15-59_baml_test_assertions.md)
+
+#### The plans
+
+- While the research was running, I got impatient and kicked off a plan, with no research, to see if claude could go straight to an implementation plan - [you can see it here](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/plans/fix-assert-syntax-validation-no-research.md)
+- When the research was done, I kicked off another implementation plan - [you can see it here](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/plans/baml-test-assertion-validation-with-research.md)
+
+The plans are both fairly short, but they differ significantly. They fix the issue in different ways, and have different testing approaches. Without going too much into detail, they both "would have worked" but the one built with research fixed the problem in the *best* place and prescribed testing more in line with the codebase conventions.
+
+#### The implementation
+
+- This was all happening the night before the podcast recording. I ran both plans in parallel and submitted both as PRs before heading to bed.
+
+By the time we were on the show at 10am PT the next day, [the PR from the plan with the research was already approved by @aaron](https://github.com/BoundaryML/baml/pull/2259#issuecomment-3155883849), who didn't even know I was doing a bit for a podcast 🙂. We [closed the other one](https://github.com/BoundaryML/baml/pull/2258/files).
+
+So out of our original 4 goals, we hit:
+
+- ✅ Works in brownfield codebases (300k LOC rust project)
+- Solves complex problems
+- ✅ no slop (pr merged)
+- Keeps mental alignment
+
+### Solving complex problems
+
+Vaibhav was still skeptical, and I wanted to see if we could solve a more complex problem. 
+So a few weeks later, the two of us spent 7 hours (3 hours on research/plans, 4 hours on implementation) and shipped 35k LOC to add cancellation and wasm support to BAML. 
+The [cancelation PR just got merged last week](https://github.com/BoundaryML/baml/pull/2357). 
+
+✅ So we can solve complex problems too. 
+
+### This is not Magic
+
+Remember that part in the example where I read the research and threw it out cause it was wrong? Or me and Vaibhav sitting DEEPLY ENGAGED FOR 7 HOURS? You have to engage with your task when you're doing this or it WILL NOT WORK.
+
+There's a certain type of person who is always looking for the one magic prompt that will solve all their problems. It doesn't exist.
+
+Frequent Intention Compaction via a research/plan/implement flow will make your performance better, but what makes it good is that you build high-leverage human review into your pipeline.
+
+<img width="1331" height="748" alt="Screenshot 2025-08-29 at 11 16 08 AM" src="https://github.com/user-attachments/assets/f12a10e2-7ffe-44c5-9d9a-b6e42ff5251e" />
+
+
+### On Human Leverage
+
+If there's one thing you take away from all this, let it be this:
+
+A bad line of code is… a bad line of code.
+But a bad line of **plan** = hundreds of bad lines of code.
+And a bad line of **research** = thousands.
+
+<img width="225" height="728" alt="Screenshot 2025-08-29 at 11 16 26 AM" src="https://github.com/user-attachments/assets/398ac859-80c6-4791-8c61-4c13198ee6f6" />
+<img width="1333" height="749" alt="Screenshot 2025-08-29 at 11 16 47 AM" src="https://github.com/user-attachments/assets/85b6a4c1-71e1-4deb-afef-5a797944a3ac" />
+<img width="1333" height="746" alt="Screenshot 2025-08-29 at 11 17 00 AM" src="https://github.com/user-attachments/assets/54a09c99-b177-41b2-a43d-04d6b94bc56e" />
+
+So you want to **focus human effort and attention** on the HIGHEST LEVERAGE parts of the pipeline.
+
+<img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 17 13 AM" src="https://github.com/user-attachments/assets/305d3716-cb5c-4c1d-bb2b-bc035b35540b" />
+
+
+When you review the research and the plans
+
+### What is code review for?
+
+People have a lot of different opinions on what code review is for.
+
+I prefer [Blake Smith's framing in Code Review Essesentials for Software Teams](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html), where he says the most important part of code review is mental alignment - keeping members of the team on the page as to how the code is changing and why.
+
+<img width="500" height="647" alt="image" src="https://github.com/user-attachments/assets/4c873d29-5dd7-4ed1-82e7-332e871b1d12" />
+
+Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the **lack of mental alignment**.
+I was completely losing touch with what our product was and how it worked. 
+Anyone who's worked with a very productive AI coder has had this experience.
+
+This is actually the most important part of research/plan/implement to us. 
+A guaranteed side effect of everyone shipping way more code and complexity is that a much larger proportion of your codebase is going to be unfamiliar to any given engineer at any point in time.
+
+I won't even try to convince you that research/plan/implement is the *right approach for most teams* - it probably isn't. But you ABSOLUTELY need an engineering process that 
+
+1. keeps team members on the same page
+2. enables team members to quickly learn about unfamiliar parts of the codebase
+
+For most teams, this is pull requests and internal docs. For us it's now specs, plans, and research.
+
+I can't read 2000 lines of golang daily. But I *can* read 200 lines of a well-written implementation plan.
+
+I can't go spelunking through 40+ files of daemon code for an hour+ when something is broken (okay, I can, but I don't want to). I *can* steer a research prompt to give me the speed-run on where I should be looking and why.
+
+### Recap
+
+Basically we got everything we needed.
+
+- ✅ Works in brownfield codebases
+- ✅ Solves complex problems
+- ✅ No slop
+- ✅ Maintains mental alignment
+
+(oh, and yeah, our team of three is averaging about $12k on opus per month)
+
+So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that does not work perfectly for every problem. 
+In August the whole team spent 2 weeks spinning circles on a really tricky race condition that spiraled into a rabbit hole of issues with MCP sHTTP keepalives in golang and a whole bunch of other race-y nonsense. 
+
+But in general, I know this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was geniunely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. And if you haven't met Vaibhav, he's one of the most fastidious engineers I know when it comes to code design and quality.
+
+### What's coming
+
+I'm fairly confident that coding agents will be commoditized.
+
+The hard part will be the team and workflow transformation. Everything about collaboration will change in a world where AI writes 99% of our code.
+
+I belive pretty strongly that if you don't figure this out, you're gonna get lapped by someone who did. 
+
+### okay so clearly you have something to sell me
+
+We're so bullish on spec-first, agentic workflows that we're building tools to make it easier for everyone. Among many things, I'm obsessed with the problem of scaling these "frequent intentional compaction" workflows collaboratively across large teams. 
+
+On Tuesday, we're launching CodeLayer, our new "post-IDE IDE" in private beta. If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
+
+**Sign up at [https://hlyr.dev/code](https://hlyr.dev/code)**. When you sign up, you'll get an email, if you reply to that with your YC verification link, we'll jump you to the front of the line.
+
+## For Engineering Leaders
+
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're doing a forward-deployed offering where we help you tackle the organizational hurdles to make ai-first coding work at scale. I'll also be diving deep on this stuff at the [YC CTO summit](https://bookface.ycombinator.com/posts/92305).
+
+### Thanks
+
+- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrew, a bunch more I'm too tired to name out right now. Drop a comment and I'll add you
+- Thanks Sundeep for weathering this wacky storm 
+- Thanks Allison, Geoff, and Gerred for dragging us kicking and screaming into the future
+
+
+### Comments - Other people are writing about this
+
+- bf posts
+- geoff posts
+
+All other links:
+
+- 
+
+
+### Comments - Whats happening to humanlayer?
+
+We closed off new HumanLayer signups about a month ago. This was a hard decision to make but I've got so much conviction in the new thing that it doesn't make sense to keep supporting two products. We'll be working with our current customers to migrate off, and will likely end up open sourcing large parts of the old codebase (or maybe you can point ralph at the [llms-full.txt](https://www.humanlayer.dev/docs/llms-full.txt) and reverse engineer it from specs 🙂)
+
+grateful to @nick and the mandel team for being one of our earlist champions and the first to deploy to production. Shouts out to all the other founders in our batch who tried humanlayer, messed with the intergrations, gave us feedback, sent us bug reports, and helped us grind along our search for PMF.
+
+If you want to learn more about why I lost conviction in humanlayer the product, and why I'm tending bearish on horizontal agent infra in general these days, hit me up and happy to share, otherwise I'll save that story for another post 🙂

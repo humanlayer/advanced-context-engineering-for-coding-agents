@@ -26,8 +26,8 @@
 > I will polish all the AI slop soon.
 >
 > -dex
+<img width="947" height="252" alt="Screenshot 2025-08-29 at 3 58 11 PM" src="https://github.com/user-attachments/assets/8310c8fc-5b6d-4fda-9bf3-22e18d684ab2" />
 
-<img width="937" height="547" alt="Screenshot 2025-08-29 at 3 57 10 PM" src="https://github.com/user-attachments/assets/83fec7c5-5cb0-4646-8ec6-5ad02cbc4f20" />
 
 Hi, I'm dex. You might remember me from [12-factor agents](https://hlyr.dev/12fa), coining "context engineering," or [the AI Engineer talk](https://www.youtube.com/watch?v=8kMaTybvDUw).
 

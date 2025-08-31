@@ -23,6 +23,8 @@ Yegor's talk on developer productivity tackled an orthogonal problem. They analy
 1. That AI tools often lead to a lot of rework, diminishing the perceived productivity gains
 2. That AI tools work well for greenfield projects, but are often counter-productive for brownfield codebases and complex tasks
 
+<img width="2008" height="1088" alt="image" src="https://github.com/user-attachments/assets/f7cec497-3ee2-47d1-8f91-a18210625e19" />
+
 <img width="1326" height="751" alt="Screenshot 2025-08-29 at 10 55 32 AM" src="https://github.com/user-attachments/assets/06f03232-f9d9-4a92-a182-37056bf877a4" />
 
 This matched what I heard talking with founders:

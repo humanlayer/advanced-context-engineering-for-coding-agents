@@ -372,6 +372,6 @@ If you or someone you know is an engineering leader that wants to 10x their team
 
 ### Thanks
 
-- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrewchurchill, a bunch more I'm too tired to name out right now. Drop a comment and I'll add you
+- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrewchurchill, many many more
 - Thanks Sundeep for weathering this wacky storm 
 - Thanks Allison, Geoff, and Gerred for dragging us kicking and screaming into the future

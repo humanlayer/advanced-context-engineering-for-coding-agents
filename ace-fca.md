@@ -1,4 +1,6 @@
-# Advanced Context Engineering for Coding Agents: Getting AI to solve complex problems in brownfield codebases
+**PRE RELEASE** - if you're reading this, this post has not been published fully yet - feedback welcome but please don't pass this around just yet!
+
+# Advanced Context Engineering for Coding Agents: Lessons Learned trying to get AI to solve complex problems in brownfield codebases
 
 Hey folks, dex here.
 
@@ -270,6 +272,9 @@ The [cancelation PR just got merged last week](https://github.com/BoundaryML/bam
 
 ✅ So we can solve complex problems too. 
 
+
+
+
 ### This is not Magic
 
 Remember that part in the example where I read the research and threw it out cause it was wrong? Or me and Vaibhav sitting DEEPLY ENGAGED FOR 7 HOURS? You have to engage with your task when you're doing this or it WILL NOT WORK.
@@ -279,6 +284,12 @@ There's a certain type of person who is always looking for the one magic prompt 
 Frequent Intentional Compaction via a research/plan/implement flow will make your performance better, but what makes it good is that you build high-leverage human review into your pipeline.
 
 <img width="1331" height="748" alt="Screenshot 2025-08-29 at 11 16 08 AM" src="https://github.com/user-attachments/assets/f12a10e2-7ffe-44c5-9d9a-b6e42ff5251e" />
+
+### Eggs on Faces
+
+Last week, @blakesmith and I sat down for 7 hours and [tried to remove hadoop dependencies from parquet java]() - the deep dive on everything that went wrong and my theories as to why, I'll save for another post, suffice it to say that it did not go well.
+
+There are big hard problems you cannot just prompt your way through in 7 hours, and I'm still curiously and excitedly hacking on pushing the boundaries 
 
 
 ### On Human Leverage
@@ -296,7 +307,7 @@ So you want to **focus human effort and attention** on the HIGHEST LEVERAGE part
 <img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 17 13 AM" src="https://github.com/user-attachments/assets/305d3716-cb5c-4c1d-bb2b-bc035b35540b" />
 
 
-When you review the research and the plans
+When you review the research and the plans, you get more leverage than you do when you review the code. (By the way, one of our primary focuses @ [humanlayer](https://hlyr.dev/code) is helping teams build and leverage high-quality workflow prompts, and in creating great collaboration workflows for ai-generated code and specs).
 
 ### What is code review for?
 
@@ -351,7 +362,7 @@ And I believe pretty strongly that if you don't figure this out, you're gonna ge
 
 We're pretty bullish on spec-first, agentic workflows, so we're building tools to make it easier. Among many things, I'm obsessed with the problem of scaling these "frequent intentional compaction" workflows collaboratively across large teams. 
 
-On Tuesday, we're launching CodeLayer, our new "post-IDE IDE" in private beta - think "Superhuman for claude code". If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
+Today, we're launching CodeLayer, our new "post-IDE IDE" in private beta - think "Superhuman for claude code". If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
 
 **Sign up at [https://hlyr.dev/code](https://hlyr.dev/code)**.
 

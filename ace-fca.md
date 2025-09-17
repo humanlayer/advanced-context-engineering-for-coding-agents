@@ -63,7 +63,7 @@ I still read the tests pretty carefully, but the specs became our source of trut
 The transformation took about 8 weeks. 
 It was incredibly uncomfortable for everyone involved, not least of all for me. 
 But now we're flying. A few weeks back, I shipped 6 PRs in a day. 
-I can count on one hand the number of times I've opened a non-markdown file in an editor in the last two months.
+I can count on one hand the number of times I've edited a non-markdown file by hand in the last two months.
 
 ## Advanced Context Engineering for Coding Agents
 
@@ -91,14 +91,14 @@ Most of us start by using a coding agent like a chatbot. You talk (or shout) bac
 
 A slightly smarter way is to just start over when you get off track, discarding your session and starting a new one, perhaps with a little more steering in the prompt. 
 
-> [original prompt], but make sure not to use XYZ approach, that won't work
+> [original prompt], but make sure you use XYZ approach, because ABC approach won't work
 
 <img width="1331" height="744" alt="Screenshot 2025-08-29 at 11 08 55 AM" src="https://github.com/user-attachments/assets/c96f9b42-0801-428a-b366-af871d1f97af" />
 
 
 ### Slightly Smarter: Intentional Compaction
 
-You have probably done something I've come to call "intentional compaction". Whether you're on track or not, as your context starts to fill up, you probably want to pause your work and start over with a fresh context window. To do this, you might drop a prompt like
+You have probably done something I've come to call "intentional compaction". Whether you're on track or not, as your context starts to fill up, you probably want to pause your work and start over with a fresh context window. To do this, you might use a prompt like
 
 > "Write everything we did so far to progress.md, ensure to note the end goal, the approach we're taking, the steps we've done so far, and the current failure we're working on"
 
@@ -230,13 +230,13 @@ I will skip this part for brevity but feel free to launch a claude session in [h
 
 ### Putting this into practice 
 
-I do a [weekly live-coding session](https://github.com/ai-that-works/ai-that-works) with @vaibhav where we whiteboard and code up a solution to an advanced AI Engineering problem. It's one of the highlights of my week.
+I do a [weekly live-coding session](https://github.com/ai-that-works/ai-that-works) with [@vaibhav](https://www.linkedin.com/in/vaigup/) where we whiteboard and code up a solution to an advanced AI Engineering problem. It's one of the highlights of my week.
 
-A few weeks ago, I [decided to share some more about the process](https://hlyr.dev/he-gh), curious if our in-house techniques could one-shot a fix to a 300k LOC Rust codebase for BAML, a programming language for working with LLMs. I picked out [an (admittedly small-ish) bug](https://github.com/BoundaryML/baml/issues/1252) from the @BoundaryML repo and got to work. 
+Several weeks ago, I [decided to share some more about the process](https://hlyr.dev/he-gh), curious if our in-house techniques could one-shot a fix to a 300k LOC Rust codebase for BAML, a programming language for working with LLMs. I picked out [an (admittedly small-ish) bug](https://github.com/BoundaryML/baml/issues/1252) from the @BoundaryML repo and got to work. 
 
 You can [watch the episode](https://hlyr.dev/he-yt) to learn more about the process, but to outline it:
 
-Worth noting: I am at best an amateur Rust dev, and I have never worked in the BAML codebase before.
+**Worth noting**: I am at best an amateur Rust dev, and I have never worked in the BAML codebase before.
 
 #### The research
 
@@ -247,13 +247,13 @@ Worth noting: I am at best an amateur Rust dev, and I have never worked in the B
 #### The plans
 
 - While the research was running, I got impatient and kicked off a plan, with no research, to see if claude could go straight to an implementation plan - [you can see it here](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/plans/fix-assert-syntax-validation-no-research.md)
-- When the research was done, I kicked off another implementation plan - [you can see it here](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/plans/baml-test-assertion-validation-with-research.md)
+- When the research was done, I kicked off another implementation plan that used the research results - [you can see it here](https://github.com/ai-that-works/ai-that-works/blob/main/2025-08-05-advanced-context-engineering-for-coding-agents/thoughts/shared/plans/baml-test-assertion-validation-with-research.md)
 
-The plans are both fairly short, but they differ significantly. They fix the issue in different ways, and have different testing approaches. Without going too much into detail, they both "would have worked" but the one built with research fixed the problem in the *best* place and prescribed testing more in line with the codebase conventions.
+The plans are both fairly short, but they differ significantly. They fix the issue in different ways, and have different testing approaches. Without going too much into detail, they both "would have worked" but the one built with research fixed the problem in the *best* place and prescribed testing that was in line with the codebase conventions.
 
 #### The implementation
 
-- This was all happening the night before the podcast recording. I ran both plans in parallel and submitted both as PRs before heading to bed.
+- This was all happening the night before the podcast recording. I ran both plans in parallel and submitted both as PRs before signing off for the night.
 
 By the time we were on the show at 10am PT the next day, [the PR from the plan with the research was already approved by @aaron](https://github.com/BoundaryML/baml/pull/2259#issuecomment-3155883849), who didn't even know I was doing a bit for a podcast 🙂. We [closed the other one](https://github.com/BoundaryML/baml/pull/2258/files).
 
@@ -266,13 +266,14 @@ So out of our original 4 goals, we hit:
 
 ### Solving complex problems
 
-Vaibhav was still skeptical, and I wanted to see if we could solve a more complex problem. 
+Vaibhav was still skeptical, and I wanted to see if we could solve a more complex problem.
+
 So a few weeks later, the two of us spent 7 hours (3 hours on research/plans, 4 hours on implementation) and shipped 35k LOC to add cancellation and wasm support to BAML. 
-The [cancelation PR just got merged last week](https://github.com/BoundaryML/baml/pull/2357). 
+The [cancelation PR just got merged last week](https://github.com/BoundaryML/baml/pull/2357). [The WASM one is still open](https://github.com/BoundaryML/baml/pull/2330), but has a working demo of calling the wasm-compiled rust runtime from a JS app in the browser. 
+
+While the cancelation PR required a little more love to take things over the line, we got incredible progress in just a day. Vaibhav estimated that each of these PRs would have been 3-5 days of work for a senior engineer on the BAML team to complete.
 
 ✅ So we can solve complex problems too. 
-
-
 
 
 ### This is not Magic
@@ -281,24 +282,23 @@ Remember that part in the example where I read the research and threw it out cau
 
 There's a certain type of person who is always looking for the one magic prompt that will solve all their problems. It doesn't exist.
 
-Frequent Intentional Compaction via a research/plan/implement flow will make your performance better, but what makes it good is that you build high-leverage human review into your pipeline.
+Frequent Intentional Compaction via a research/plan/implement flow will make your performance **better**, but what makes it **good enough for hard problems** is that you build high-leverage human review into your pipeline.
 
 <img width="1331" height="748" alt="Screenshot 2025-08-29 at 11 16 08 AM" src="https://github.com/user-attachments/assets/f12a10e2-7ffe-44c5-9d9a-b6e42ff5251e" />
 
 ### Eggs on Faces
 
-Last week, @blakesmith and I sat down for 7 hours and [tried to remove hadoop dependencies from parquet java]() - the deep dive on everything that went wrong and my theories as to why, I'll save for another post, suffice it to say that it did not go well.
+A few weeks back, [@blakesmith](https://www.linkedin.com/in/bhsmith/) and I sat down for 7 hours and [tried to remove hadoop dependencies from parquet java](https://github.com/dexhorthy/parquet-java/blob/remove-hadoop/thoughts/shared/plans/remove-hadoop-dependencies.md) - the deep dive on everything that went wrong and my theories as to why, I'll save for another post, suffice it to say that it did not go well. The tl;dr is that the research steps didn't go deep enough through the dependency tree, and assumed classes could be moved upstream without introducing deeply nested hadoop dependencies.
 
-There are big hard problems you cannot just prompt your way through in 7 hours, and I'm still curiously and excitedly hacking on pushing the boundaries 
-
+There are big hard problems you cannot just prompt your way through in 7 hours, and we're still curiously and excitedly hacking on pushing the boundaries with friends and partners. I think the other learning here is that you probably need at least one person who is an expert in the codebase, and for this case, that was neither of us.
 
 ### On Human Leverage
 
 If there's one thing you take away from all this, let it be this:
 
 A bad line of code is… a bad line of code.
-But a bad line of **plan** = hundreds of bad lines of code.
-And a bad line of **research** = thousands.
+But a bad line of a **plan** could lead to hundreds of bad lines of code.
+And a bad line of **research**, a misunderstanding of how the codebase works or where certain functionality is located, could land you with thousands of bad lines of code.
 
 <img width="1333" height="746" alt="Screenshot 2025-08-29 at 11 17 00 AM" src="https://github.com/user-attachments/assets/54a09c99-b177-41b2-a43d-04d6b94bc56e" />
 
@@ -307,7 +307,7 @@ So you want to **focus human effort and attention** on the HIGHEST LEVERAGE part
 <img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 17 13 AM" src="https://github.com/user-attachments/assets/305d3716-cb5c-4c1d-bb2b-bc035b35540b" />
 
 
-When you review the research and the plans, you get more leverage than you do when you review the code. (By the way, one of our primary focuses @ [humanlayer](https://hlyr.dev/code) is helping teams build and leverage high-quality workflow prompts, and in creating great collaboration workflows for ai-generated code and specs).
+When you review the research and the plans, you get more leverage than you do when you review the code. (By the way, one of our primary focuses @ [humanlayer](https://hlyr.dev/code) is helping teams build and leverage high-quality workflow prompts and crafting great collaboration workflows for ai-generated code and specs).
 
 ### What is code review for?
 
@@ -317,7 +317,8 @@ I prefer [Blake Smith's framing in Code Review Essentials for Software Teams](ht
 
 <img width="500" height="647" alt="image" src="https://github.com/user-attachments/assets/4c873d29-5dd7-4ed1-82e7-332e871b1d12" />
 
-Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the lack of mental alignment. I was starting to lose touch with what our product was and how it worked. 
+Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the lack of mental alignment. **I was starting to lose touch with what our product was and how it worked.** 
+
 I would expect that anyone who's worked with a very productive AI coder has had this experience.
 
 This is actually the most important part of research/plan/implement to us. 
@@ -345,10 +346,11 @@ Basically we got everything we needed.
 
 (oh, and yeah, our team of three is averaging about $12k on opus per month)
 
-So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that this does not work perfectly for every problem. 
-In August the whole team spent 2 weeks spinning circles on a really tricky race condition that spiraled into a rabbit hole of issues with MCP sHTTP keepalives in golang and a whole bunch of other race-y nonsense. 
+So you don't think I'm just another [hyped up mustachio'd sales guy](https://www.youtube.com/watch?v=IS_y40zY-hc&lc=UgzFldRM6LU5unLuFn54AaABAg.AMKlTmJAT5ZAMKrOOAMw3I), I'll note that this does not work perfectly for every problem (we'll be back for another round sound, parquet-java).
 
-But that's the exception now. In general, this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was genuinely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. (And if you haven't met Vaibhav, he's one of the most meticulous engineers I know when it comes to code design and quality)
+In August the whole team spent 2 weeks spinning circles on a really tricky race condition that spiraled into a rabbit hole of issues with MCP sHTTP keepalives in golang and a whole bunch of other dead ends. 
+
+But that's the exception now. In general, this works well for us. Our intern shipped 2 PRs on his first day, and 10 on his 8th day. I was genuinely skeptical that it would work for anyone else, but me and Vaibhav shipped 35k LOC of working BAML code in 7 hours. (And if you haven't met Vaibhav, he's one of the most meticulous engineers I know when it comes to code design and quality.)
 
 ### What's coming
 
@@ -368,10 +370,10 @@ Today, we're launching CodeLayer, our new "post-IDE IDE" in private beta - think
 
 ## For Engineering Leaders
 
-If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with everyone from 6-person startups to 1000-employee public companies to help teams make the culture/process/tech shift to transition to the ai-first coding world.
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with ~10-25 person eng orgs to help teams make the culture/process/tech shift needed to transition to the ai-first coding world.
 
 ### Thanks
 
-- Thanks to all the founders who've listened through early ramble-y versions of this post @adamsusskin @joshpurtell @andrewchurchill, many many more
+- Thanks to all the founders who've listened through early ramble-y versions of this post - Adam, Josh, Andrew, and many many more
 - Thanks Sundeep for weathering this wacky storm 
 - Thanks Allison, Geoff, and Gerred for dragging us kicking and screaming into the future

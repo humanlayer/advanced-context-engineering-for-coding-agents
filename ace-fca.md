@@ -6,7 +6,7 @@
 
 Hey folks, dex here.
 
-You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) post, as the coiner of the term "context engineering" or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
+You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) guide, as the coiner of the term "context engineering", or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
 
 I'm stoked to share with what we've been up to since then and why it matters to every team that's serious about software, and get feedback from the community here.
 

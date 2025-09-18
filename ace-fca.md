@@ -1,6 +1,8 @@
 **PRE RELEASE** - if you're reading this, this post has not been published fully yet - feedback welcome but please don't pass this around just yet!
 
-# Advanced Context Engineering for Coding Agents: Lessons Learned trying to get AI to solve complex problems in brownfield codebases
+# Advanced Context Engineering for Coding Agents
+
+*Lessons Learned trying to get AI to solve complex problems in brownfield codebases*
 
 Hey folks, dex here.
 

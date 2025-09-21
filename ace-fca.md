@@ -2,17 +2,20 @@
 
 # Putting AI to Work in Complex Codebases
 
-Everyone knows AI coding tools struggle with real production codebases. The [the Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) proved it: A lot of the "extra code" shipped by AI tools ends up just reworking the slop that was shipped last week. Coding agents are great for new projects or small changes, but in large established codebases, AI can often make developers *less* productive. 
+It seems pretty well-accepted that AI coding tools struggle with real production codebases. The [Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) found:
+
+1. A lot of the "extra code" shipped by AI tools ends up just reworking the slop that was shipped last week.
+2. Coding agents are great for new projects or small changes, but in large established codebases, AI can often make developers *less* productive. 
 
 The common response is somewhere between the pessimist "this will never work" and the more measured "maybe someday when there are smarter models."
 
-But here's what we discovered: **you can get really far with today's models if you embrace core context engineering principles**.
+After several months of tinkering, I've found that **you can get really far with today's models if you embrace core context engineering principles**.
 
-We have been iterating a lot on techniques and have found some workflows that let current models handle 300k LOC Rust codebases, ship a week's worth of work in a day, and maintain code quality that passes expert review. The key is something we call "frequent intentional compaction" - deliberately structuring how you feed context to the AI throughout the development process.
+This isn't another "10x your productivity" pitch. I [tend to be pretty measured when it comes to interfacing with the ai hype machine](https://hlyr.dev/12fa). But we've stumbled into workflows that leave me with considerable optimism for what's possible. We've gotten claude code to handle 300k LOC Rust codebases, ship a week's worth of work in a day, and maintain code quality that passes expert review. The key is something we call "frequent intentional compaction" - deliberately structuring how you feed context to the AI throughout the development process.
 
-This isn't another "10x your productivity" pitch. What follows is some of the learnings that convinced me that AI for coding is not just for toys and prototypes, but rather a deeply technical engineering craft.
+I am now fully convinced that AI for coding is not just for toys and prototypes, but rather a deeply technical engineering craft.
 
-### The Stanford study that changed everything
+### Grounding Context from AI Engineer
 
 Two talks from AI Engineer 2025 fundamentally shaped my thinking about this problem.
 
@@ -62,8 +65,9 @@ I was working with one of the most productive AI coders I've ever met.
 Every few days they'd drop **2000-line Go PRs**.
 And this wasn't a nextjs app or a CRUD API. This was complex, [race-prone systems code](https://github.com/humanlayer/humanlayer/blob/main/hld/daemon/daemon_subscription_integration_test.go#L45) that did JSON RPC over unix sockets and managed streaming stdio from forked unix processes (mostly claude code sdk processes, more on that later 🙂).
 
-The idea of carefully reading 2,000 lines of complex Go code every few days was simply not sustainable. 
-We had no choice but to adopt **spec-driven development**.
+The idea of carefully reading 2,000 lines of complex Go code every few days was simply not sustainable. I was starting to feel a bit like Mitchell Hashimoto when he added the [AI contributions must be disclosed](https://github.com/ghostty-org/ghostty/pull/8289) rules for ghostty.
+
+Our approach was to adopt something like sean's **spec-driven development**.
 
 It was uncomfortable at first. 
 I had to learn to let go of reading every line of PR code. 
@@ -72,7 +76,7 @@ I still read the tests pretty carefully, but the specs became our source of trut
 The transformation took about 8 weeks. 
 It was incredibly uncomfortable for everyone involved, not least of all for me. 
 But now we're flying. A few weeks back, I shipped 6 PRs in a day. 
-I can count on one hand the number of times I've edited a non-markdown file by hand in the last two months.
+I can count on one hand the number of times I've edited a non-markdown file by hand in the last three months.
 
 ## Advanced Context Engineering for Coding Agents
 
@@ -101,6 +105,7 @@ Most of us start by using a coding agent like a chatbot. You talk (or [drunkenly
 A slightly smarter way is to just start over when you get off track, discarding your session and starting a new one, perhaps with a little more steering in the prompt. 
 
 > [original prompt], but make sure you use XYZ approach, because ABC approach won't work
+
 
 <img width="1331" height="744" alt="Screenshot 2025-08-29 at 11 08 55 AM" src="https://github.com/user-attachments/assets/c96f9b42-0801-428a-b366-af871d1f97af" />
 
@@ -185,7 +190,16 @@ Subagents are another way to manage context, and generic subagents (i.e. not [cu
 
 Subagents are not about [playing house and anthropomorphizing roles](https://x.com/dexhorthy/status/1950288431122436597). Subagents are about context control.
 
-<img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 12 38 AM" src="https://github.com/user-attachments/assets/0bf24a03-522d-4f1d-8722-9e0d2250bd60" />
+The most common/straightforward use case for subagents is to let you use a fresh context window to do finding/searching/summarizing that enables the parent agent to get straight to work without clouding its context window with `Glob` / `Grep` / `Read` / etc calls.
+
+
+
+https://github.com/user-attachments/assets/cb4e7864-9556-4eaa-99ca-a105927f484d
+
+
+<details><summary>(video not playing on mobile? expand for the static image version)</summary>
+  <img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 12 38 AM" src="https://github.com/user-attachments/assets/0bf24a03-522d-4f1d-8722-9e0d2250bd60" />
+</details>
 
 
 The ideal subagent response probably looks similar to the ideal ad-hoc compaction from above
@@ -375,14 +389,20 @@ We're pretty bullish on spec-first, agentic workflows, so we're building tools t
 
 Today, we're launching CodeLayer, our new "post-IDE IDE" in private beta - think "Superhuman for claude code". If you're a fan of Superhuman and/or vim mode and you're ready to move beyond "vibe coding" and get serious about building with agents, we'd love to have you join the waitlist. 
 
-**Sign up at [https://hlyr.dev/code](https://hlyr.dev/code)**.
+**Sign up at [https://humanlayer.dev](https://humanlayer.dev)**.
+
+## For OSS Maintainers - lets ship something together
+
+If you are a maintainer on a complex OSS project and based in the bay area, my open offer - I will pair with you in-person in SF for 7 hours on a saturday and see if we can ship something big.
+
+I get a lot of learning about the limitations and where these techniques fall short (and, with any luck, a working merged PR that adds a ton of value that I can point to). You get to learn the workflow in the only way I've found that works well - direct 1x1 pairing.
 
 ## For Engineering Leaders
 
-If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with ~10-25 person eng orgs to help teams make the culture/process/tech shift needed to transition to the ai-first coding world.
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with ~10-25 person eng orgs to help teams make the culture/process/tech shift needed to transition to an ai-first coding world.
 
 ### Thanks
 
-- Thanks to all the founders who've listened through early ramble-y versions of this post - Adam, Josh, Andrew, and many many more
+- Thanks to all the friends and founders who've listened through early ramble-y versions of this post - Adam, Josh, Andrew, and many many more
 - Thanks Sundeep for weathering this wacky storm 
 - Thanks Allison, Geoff, and Gerred for dragging us kicking and screaming into the future

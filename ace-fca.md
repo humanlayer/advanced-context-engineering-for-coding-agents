@@ -1,20 +1,20 @@
 **PRE RELEASE** - if you're reading this, this post has not been published fully yet - feedback welcome but please don't pass this around just yet!
 
-# Advanced Context Engineering for Coding Agents
+# Putting AI to Work in Complex Codebases
 
-*Lessons Learned trying to get AI to solve complex problems in brownfield codebases*
+Everyone knows AI coding tools struggle with real production codebases. The [the Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) proved it: A lot of the "extra code" shipped by AI tools ends up just reworking the slop that was shipped last week. Coding agents are great for new projects or small changes, but in large established codebases, AI can often make developers *less* productive. 
 
-Hey folks, dex here.
+The common response is somewhere between the pessimist "this will never work" and the more measured "maybe someday when there are smarter models."
 
-You may remember me from April's [12-factor agents](https://hlyr.dev/12fa) guide, as the coiner of the term "context engineering", or from the [AI Engineer talk on the topic](https://www.youtube.com/watch?v=8kMaTybvDUw). 
+But here's what we discovered: **you can get really far with today's models if you embrace core context engineering principles**.
 
-I'm stoked to share with what we've been up to since then and why it matters to every team that's serious about software, and get feedback from the community here.
+We have been iterating a lot on techniques and have found some workflows that let current models handle 300k LOC Rust codebases, ship a week's worth of work in a day, and maintain code quality that passes expert review. The key is something we call "frequent intentional compaction" - deliberately structuring how you feed context to the AI throughout the development process.
 
-**Note** - if you prefer video - this post is based on [a talk that was recorded at YC](https://hlyr.dev/ace) on Aug 20th
+This isn't another "10x your productivity" pitch. What follows is some of the learnings that convinced me that AI for coding is not just for toys and prototypes, but rather a deeply technical engineering craft.
 
-### From 12-factor agents to context engineering for coding agents
+### The Stanford study that changed everything
 
-I have 2 favorite talks from AI Engineer 2025. (incidentally, the only two AIE talks with [more views than 12-factor agents](https://www.youtube.com/@aiDotEngineer/videos))
+Two talks from AI Engineer 2025 fundamentally shaped my thinking about this problem.
 
 The first is [Sean Grove's talk on "Specs are the new code"](https://www.youtube.com/watch?v=8rABwKRsec4) and the second is [the Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk).
 
@@ -22,12 +22,13 @@ Sean argued that we’re all *vibe coding wrong*. The idea of chatting with an A
 
 Sean proposes that in the AI future, the specs will become the real code. That in two years, you'll be opening python files in your IDE with about the same frequency that, today, you might open up a hex editor to read assembly (which, for most of us, is never).
 
-Yegor's talk on developer productivity tackled an orthogonal problem. They analyzed commits from 100k developers and found, among other things,
+[Yegor's talk on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) tackled an orthogonal problem. They analyzed commits from 100k developers and found, among other things,
 
 1. That AI tools often lead to a lot of rework, diminishing the perceived productivity gains
-2. That AI tools work well for greenfield projects, but are often counter-productive for brownfield codebases and complex tasks
 
 <img width="2008" height="1088" alt="image" src="https://github.com/user-attachments/assets/f7cec497-3ee2-47d1-8f91-a18210625e19" />
+
+2. That AI tools work well for greenfield projects, but are often counter-productive for brownfield codebases and complex tasks
 
 <img width="1326" height="751" alt="Screenshot 2025-08-29 at 10 55 32 AM" src="https://github.com/user-attachments/assets/06f03232-f9d9-4a92-a182-37056bf877a4" />
 
@@ -45,9 +46,15 @@ The general vibe on AI-coding for hard stuff tends to be
 Heck even [Amjad](https://x.com/amasad) was on a [lenny's podcast 9 months ago](https://www.lennysnewsletter.com/p/behind-the-product-replit-amjad-masad) talking about how PMs use Replit agent to prototype new stuff and then they hand it off to engineers to implement for production.
 (Disclaimer: i haven't caught up with him recently (ok, ever), this stance may have changed)
 
-Whenever I hear "Maybe someday when the models are smart" I generally leap to exclaim **that’s what context engineering is all about**: getting the most out of *today’s* models. 
+Whenever I hear "Maybe someday when the models are smart" I generally leap to exclaim **that's what context engineering is all about**: getting the most out of *today's* models.
 
-While obsessing over these talks and llms and context for the last few months, I think we found something really cool.
+### What's actually possible today
+
+I'll deep dive on this a bit futher down, but to prove this isn't just theory, let me outline a concrete example. A few weeks ago, I decided to test our techniques on [BAML](https://github.com/BoundaryML/baml), a 300k LOC Rust codebase for a programming language that works with LLMs. I'm at best an amateur Rust dev and had never touched the BAML codebase before.
+
+Within an hour or so, I had a [PR fixing a bug](https://github.com/BoundaryML/baml/pull/2259#issuecomment-3155883849) which was approved by the maintainer the next morning. A few weeks later, [@hellovai](https://x.com/hellovai) and I paired on shipping 35k LOC to BAML, adding [cancellation support](https://github.com/BoundaryML/baml/pull/2357) and [WASM compilation](https://github.com/BoundaryML/baml/pull/2330) - features the team estimated would take a senior engineer 3-5 days each. We got both draft prs ready in about 7 hours.
+
+Again, this is all built around a workflow we call [frequent intentional compaction](#what-works-even-better-frequent-intentional-compaction) - essentially designing your entire development process around context management, keeping utilization in the 40-60% range, and building in high-leverage human review at exactly the right points. We use a "research, plan, implement" workflow, but the core capabilities/learnings here are FAR more general than any specific workflow or set of prompts.
 
 ### Our weird journey to get here
 
@@ -87,7 +94,7 @@ I'll dive into:
 
 ### But first: The Naive Way to manage agent context
 
-Most of us start by using a coding agent like a chatbot. You talk (or shout) back and forth with it, vibing your way through a problem until you either run out of context, give up, or the agent starts apologizing.
+Most of us start by using a coding agent like a chatbot. You talk (or [drunkenly shout](https://ghuntley.com/six-month-recap/#:~:text=Last%20week%2C%20over%20Zoom%20margaritas%2C%20a%20friend%20and%20I%20reminisced%20about%20COBOL.)) back and forth with it, vibing your way through a problem until you either run out of context, give up, or the agent starts apologizing.
 
 <img width="1328" height="741" alt="Screenshot 2025-08-29 at 11 08 34 AM" src="https://github.com/user-attachments/assets/51a46854-c542-4515-afbb-a2fe26970809" />
 

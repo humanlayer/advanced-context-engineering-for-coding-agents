@@ -1,11 +1,11 @@
 **PRE RELEASE** - if you're reading this, this post has not been published fully yet - feedback welcome but please don't pass this around just yet!
 
-# Putting AI to Work in Complex Codebases
+# Getting AI to Work in Complex Codebases
 
 It seems pretty well-accepted that AI coding tools struggle with real production codebases. The [Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) found:
 
 1. A lot of the "extra code" shipped by AI tools ends up just reworking the slop that was shipped last week.
-2. Coding agents are great for new projects or small changes, but in large established codebases, AI can often make developers *less* productive. 
+2. Coding agents are great for new projects or small changes, but in large established codebases, they can often make developers *less* productive. 
 
 The common response is somewhere between the pessimist "this will never work" and the more measured "maybe someday when there are smarter models."
 

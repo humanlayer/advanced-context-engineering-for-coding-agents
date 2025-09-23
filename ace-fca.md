@@ -11,7 +11,7 @@ The common response is somewhere between the pessimist "this will never work" an
 
 After several months of tinkering, I've found that **you can get really far with today's models if you embrace core context engineering principles**.
 
-This isn't another "10x your productivity" pitch. I [tend to be pretty measured when it comes to interfacing with the ai hype machine](https://hlyr.dev/12fa). But we've stumbled into workflows that leave me with considerable optimism for what's possible. We've gotten claude code to handle 300k LOC Rust codebases, ship a week's worth of work in a day, and maintain code quality that passes expert review. The key is something we call "frequent intentional compaction" - deliberately structuring how you feed context to the AI throughout the development process.
+This isn't another "10x your productivity" pitch. I [tend to be pretty measured when it comes to interfacing with the ai hype machine](https://hlyr.dev/12fa). But we've stumbled into workflows that leave me with considerable optimism for what's possible. We've gotten claude code to handle 300k LOC Rust codebases, ship a week's worth of work in a day, and maintain code quality that passes expert review. We use a family of techniques I call "frequent intentional compaction" - deliberately structuring how you feed context to the AI throughout the development process.
 
 I am now fully convinced that AI for coding is not just for toys and prototypes, but rather a deeply technical engineering craft.
 

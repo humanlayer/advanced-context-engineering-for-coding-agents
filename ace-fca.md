@@ -1,5 +1,3 @@
-**PRE RELEASE** - if you're reading this, this post has not been published fully yet - feedback welcome but please don't pass this around just yet!
-
 # Getting AI to Work in Complex Codebases
 
 It seems pretty well-accepted that AI coding tools struggle with real production codebases. The [Stanford study on AI's impact on developer productivity](https://www.youtube.com/watch?v=tbDDYKRFjhk) found:

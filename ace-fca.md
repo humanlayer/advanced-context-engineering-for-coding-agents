@@ -98,15 +98,14 @@ I'll dive into:
 
 Most of us start by using a coding agent like a chatbot. You talk (or [drunkenly shout](https://ghuntley.com/six-month-recap/#:~:text=Last%20week%2C%20over%20Zoom%20margaritas%2C%20a%20friend%20and%20I%20reminisced%20about%20COBOL.)) back and forth with it, vibing your way through a problem until you either run out of context, give up, or the agent starts apologizing.
 
-<img width="1328" height="741" alt="Screenshot 2025-08-29 at 11 08 34 AM" src="https://github.com/user-attachments/assets/51a46854-c542-4515-afbb-a2fe26970809" />
+<img width="7718" height="4223" alt="image" src="https://github.com/user-attachments/assets/7361a203-9d95-42e2-ac16-1f38b04adb58" />
+
 
 A slightly smarter way is to just start over when you get off track, discarding your session and starting a new one, perhaps with a little more steering in the prompt. 
 
 > [original prompt], but make sure you use XYZ approach, because ABC approach won't work
 
-
-<img width="1331" height="744" alt="Screenshot 2025-08-29 at 11 08 55 AM" src="https://github.com/user-attachments/assets/c96f9b42-0801-428a-b366-af871d1f97af" />
-
+<img width="7727" height="4077" alt="image" src="https://github.com/user-attachments/assets/1bbbc8ad-60da-4f8b-98c3-e6603b04a0ce" />
 
 ### Slightly Smarter: Intentional Compaction
 
@@ -114,7 +113,8 @@ You have probably done something I've come to call "intentional compaction". Whe
 
 > "Write everything we did so far to progress.md, ensure to note the end goal, the approach we're taking, the steps we've done so far, and the current failure we're working on"
 
-<img width="1326" height="736" alt="Screenshot 2025-08-29 at 11 09 29 AM" src="https://github.com/user-attachments/assets/db22fe14-1010-47f4-9080-b132e4851f8c" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/64b940e5-89b1-4f6c-a79c-ec2810d9af77" />
+
 
 You can also [use commit messages for intentional compaction](https://x.com/dexhorthy/status/1961490837017088051).
 
@@ -143,7 +143,7 @@ This is just as true for [wielding](https://www.youtube.com/watch?v=F_RyElT_gJk)
 
 At any given point, a turn in an agent like claude code is a stateless function call. Context window in, next step out. 
 
-<img width="1334" height="747" alt="Screenshot 2025-08-29 at 11 11 08 AM" src="https://github.com/user-attachments/assets/471ecb31-5502-4100-8371-112dee75ac76" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/c1e920e8-5dc5-4dd2-b76d-853b85a92e6a" />
 
 That is, the contents of your context window are the ONLY lever you have to affect the quality of your output. So yeah, it's worth obsessing over.
 
@@ -196,7 +196,7 @@ https://github.com/user-attachments/assets/cb4e7864-9556-4eaa-99ca-a105927f484d
 
 
 <details><summary>(video not playing on mobile? expand for the static image version)</summary>
-  <img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 12 38 AM" src="https://github.com/user-attachments/assets/0bf24a03-522d-4f1d-8722-9e0d2250bd60" />
+  <img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/c72e7dba-1476-4ee9-9cb0-0f97d428b82a" />
 </details>
 
 
@@ -206,7 +206,7 @@ The ideal subagent response probably looks similar to the ideal ad-hoc compactio
 
 Getting a subagent to return this is not trivial:
 
-<img width="1327" height="745" alt="Screenshot 2025-08-29 at 11 13 05 AM" src="https://github.com/user-attachments/assets/113e49eb-db7f-444d-b7f6-993112f87591" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/2bcd30f6-84fd-4911-ac15-63f75619e76d" />
 
 
 ### What works even better: Frequent Intentional Compaction
@@ -305,7 +305,7 @@ There's a certain type of person who is always looking for the one magic prompt 
 
 Frequent Intentional Compaction via a research/plan/implement flow will make your performance **better**, but what makes it **good enough for hard problems** is that you build high-leverage human review into your pipeline.
 
-<img width="1331" height="748" alt="Screenshot 2025-08-29 at 11 16 08 AM" src="https://github.com/user-attachments/assets/f12a10e2-7ffe-44c5-9d9a-b6e42ff5251e" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/01c7818a-9a0d-4ede-a23b-fb0c2e80f843" />
 
 ### Eggs on Faces
 
@@ -321,11 +321,11 @@ A bad line of code is… a bad line of code.
 But a bad line of a **plan** could lead to hundreds of bad lines of code.
 And a bad line of **research**, a misunderstanding of how the codebase works or where certain functionality is located, could land you with thousands of bad lines of code.
 
-<img width="1333" height="746" alt="Screenshot 2025-08-29 at 11 17 00 AM" src="https://github.com/user-attachments/assets/54a09c99-b177-41b2-a43d-04d6b94bc56e" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/dab49f61-caae-4c15-b481-ee9b8f64995f" />
 
 So you want to **focus human effort and attention** on the HIGHEST LEVERAGE parts of the pipeline.
 
-<img width="1331" height="745" alt="Screenshot 2025-08-29 at 11 17 13 AM" src="https://github.com/user-attachments/assets/305d3716-cb5c-4c1d-bb2b-bc035b35540b" />
+<img width="9830" height="4520" alt="image" src="https://github.com/user-attachments/assets/cf981f70-5e61-4938-aa9a-7dcb88c9f8a4" />
 
 
 When you review the research and the plans, you get more leverage than you do when you review the code. (By the way, one of our primary focuses @ [humanlayer](https://hlyr.dev/code) is helping teams build and leverage high-quality workflow prompts and crafting great collaboration workflows for ai-generated code and specs).
@@ -336,7 +336,7 @@ People have a lot of different opinions on what code review is for.
 
 I prefer [Blake Smith's framing in Code Review Essentials for Software Teams](https://blakesmith.me/2015/02/09/code-review-essentials-for-software-teams.html), where he says the most important part of code review is mental alignment - keeping members of the team on the page as to how the code is changing and why.
 
-<img width="500" height="647" alt="image" src="https://github.com/user-attachments/assets/4c873d29-5dd7-4ed1-82e7-332e871b1d12" />
+<img width="7309" height="4083" alt="image" src="https://github.com/user-attachments/assets/77f4001b-175f-4da6-a6d4-e00b80489476" />
 
 Remember those 2k line golang PRs? I cared about them being correct and well designed, but the biggest source of internal unrest and frustration on the team was the lack of mental alignment. **I was starting to lose touch with what our product was and how it worked.** 
 

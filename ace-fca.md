@@ -13,6 +13,8 @@ This isn't another "10x your productivity" pitch. I [tend to be pretty measured 
 
 I am now fully convinced that AI for coding is not just for toys and prototypes, but rather a deeply technical engineering craft.
 
+**Video Version**: If you prefer video, this post is based on [a talk given at Y Combinator on August 20th](https://hlyr.dev/ace)
+
 ### Grounding Context from AI Engineer
 
 Two talks from AI Engineer 2025 fundamentally shaped my thinking about this problem.

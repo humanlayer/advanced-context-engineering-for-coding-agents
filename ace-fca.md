@@ -399,7 +399,7 @@ I get a lot of learning about the limitations and where these techniques fall sh
 
 ## For Engineering Leaders
 
-If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with ~10-25 person eng orgs to help teams make the culture/process/tech shift needed to transition to an ai-first coding world.
+If you or someone you know is an engineering leader that wants to 10x their team's productivity with AI, we're forward-deploying with teams of all sizes to help drive the culture/process/tech shift needed to transition to an ai-first coding world.
 
 ### Thanks
 

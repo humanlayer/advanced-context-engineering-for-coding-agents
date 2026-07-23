@@ -80,7 +80,7 @@ In this post I'm gonna run through:
 
 I'm gonna try to cut through the hype of every daily-emerging skills plugin and the ai-psychosis-tokenmaxxing advice pandemic, and talk in general terms about the **types of things that work** without referencing any particular skill or framework.
 
-**Video Version:** this post is based on (and expands upon) [my keynote at AI Engineer World's Fair 2026](https://hlyr.dev/wsff-live).
+**Video Version:** this post is based on (and expands upon) [my keynote at AI Engineer World's Fair 2026](https://www.youtube.com/watch?v=Ib5GBkD555M).
 
 _Thanks to [@addyosmani](https://x.com/addyosmani), [@CyrusNewDay](https://x.com/CyrusNewDay), [@HamelHusain](https://x.com/HamelHusain), [@zeeg](https://x.com/zeeg), [@dillon_mulroy](https://x.com/dillon_mulroy), [@nayshins](https://x.com/nayshins), and [@jeffreyhuber](https://x.com/jeffreyhuber) for feedback on this post._
 

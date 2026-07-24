@@ -3,7 +3,7 @@
 _or: harness engineering is not enough_
 
 > [!NOTE]
-> I run a company ([HumanLayer](https://humanlayer.com)) building tools in the human/agent collaboration space, so what I'm gonna say below may be a tad biased. Perhaps in spite of that, I hope you find the subject helpful or at the very least that you find it as interesting as I do. -Dex
+> I run a company ([HumanLayer](https://humanlayer.com?utm_source=wsff)) building tools in the human/agent collaboration space, so what I'm gonna say below may be a tad biased. Perhaps in spite of that, I hope you find the subject helpful or at the very least that you find it as interesting as I do. -Dex
 
 ## i guess we doin loops now
 
@@ -627,7 +627,7 @@ That's it. If you wanna stay for the pitch, keep scrolling I guess. I hope this 
 
 ### PS We're obsessed with this
 
-We're building [humanlayer.com](https://humanlayer.com), an agentic IDE and collaboration platform to help you move 2-3x faster while maintaining a human (or pretty-dang-close-to-human) level of code quality.
+We're building [humanlayer.com](https://humanlayer.com?utm_source=wsff), an agentic IDE and collaboration platform to help you move 2-3x faster while maintaining a human (or pretty-dang-close-to-human) level of code quality.
 
 We're building towards two ideas: "building blocks for your software factory" and "better verifiers for software maintainability" (perhaps better models even).
 

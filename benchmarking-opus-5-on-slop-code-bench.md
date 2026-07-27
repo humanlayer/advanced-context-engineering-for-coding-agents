@@ -6,7 +6,7 @@ I've [written before](https://github.com/humanlayer/advanced-context-engineering
 
 <blockquote align="center"><h3>THERE ARE NO GOOD BENCHMARKS for a model's ability to maintain codebase quality</h3></blockquote>
 
-That wasn't entirely true. This post is me correcting it.
+That wasn't entirely true. I love nothing more than burying a good lede.
 
 We'll dig into [SlopCodeBench](https://arxiv.org/html/2603.24755v1), a new-ish (March 2026) long-horizon coding benchmark from [@GOrlanski](https://x.com/GOrlanski)'s lab at UW Madison. It addresses the thing that bothers me most about coding benchmarks - that even "larger" more complex ones still divulge the whole problem up front:
 

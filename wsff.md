@@ -32,7 +32,7 @@ Our friend [Mario](https://x.com/badlogicgames) got up at AI Engineer Europe and
 
 As [Matt Pocock](https://x.com/mattpocockuk) put it, [codebases are falling apart faster than they ever have before](https://www.youtube.com/watch?v=3MP8D-mdheA). 
 
-I haven't been able to dig up any definitive data/findings from StrongDM on how that whole dark factory went. The [weather-report](https://factory.strongdm.ai/weather-report) has a few sparse updates between February and June of this year.
+I haven't been able to dig up any definitive data/findings from StrongDM on how that whole dark factory went. The [weather-report](https://factory.strongdm.ai/weather-report) has a few sparse updates between February and June of this year. **edit** - [there is some conversation with the team on hacker news on July 23](https://news.ycombinator.com/item?id=49026625) - sounds like we might get a more formal update soon!
 
 [The folks at Faros AI](https://www.faros.ai/research/ai-acceleration-whiplash) put out a report: since we[^1b] all picked up these AI coding tools back in January and February, pull-request review quality is way down. 
 
@@ -80,7 +80,7 @@ In this post I'm gonna run through:
 
 I'm gonna try to cut through the hype of every daily-emerging skills plugin and the ai-psychosis-tokenmaxxing advice pandemic, and talk in general terms about the **types of things that work** without referencing any particular skill or framework.
 
-**Video Version:** this post is based on (and expands upon) [my keynote at AI Engineer World's Fair 2026](https://hlyr.dev/wsff-live).
+**Video Version:** this post is based on (and expands upon) [my keynote at AI Engineer World's Fair 2026](https://www.youtube.com/watch?v=Ib5GBkD555M).
 
 _Thanks to [@addyosmani](https://x.com/addyosmani), [@CyrusNewDay](https://x.com/CyrusNewDay), [@HamelHusain](https://x.com/HamelHusain), [@zeeg](https://x.com/zeeg), [@dillon_mulroy](https://x.com/dillon_mulroy), [@nayshins](https://x.com/nayshins), and [@jeffreyhuber](https://x.com/jeffreyhuber) for feedback on this post._
 

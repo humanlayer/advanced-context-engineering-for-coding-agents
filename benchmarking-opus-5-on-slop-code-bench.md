@@ -1,5 +1,7 @@
 # Benchmarking Opus 5 on SlopCodeBench
 
+![Benchmarking Opus 5 on SlopCodeBench](images/scb-title-card.png)
+
 ## we got better benchmarks
 
 I've [written before](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/wsff.md) something along the lines of:
@@ -27,7 +29,6 @@ What's cool about this benchmark is that it is **unsaturated** - at the time of 
 
 On Friday I ran three claude models (Opus 4.8, Sonnet 5, and Opus 5) through a subset of [SlopCodeBench](https://arxiv.org/html/2603.24755v1) and watched it live for six hours. Opus 5 wins technically but none of them did a very good job IMO. Will post more results soon with Fable and 5.6 Sol in the mix.
 
-![Benchmarking Opus 5 on SlopCodeBench](images/scb-title-card.png)
 
 The big headline is that Opus 5 got a **24%** on the small subset of the benchmark that I ran - not much higher than Opus 4.6's 17% strict pass rate in the original paper. All of the tested models showed a pretty significant increase in verbosity, complexity, and a bunch of other code smell metrics over the course of each challenge, with Opus 5 writing **five times** the number of functions/callables than Opus 4.8 over the course of the same set of challenges.
 

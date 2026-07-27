@@ -633,8 +633,6 @@ We're building towards two ideas: "building blocks for your software factory" an
 
 HumanLayer is free for small teams of up to 3 people, and if you want help getting started, you can come hang in our [discord](https://hlyr.dev/discord) or drop us a line at [founders@humanlayer.dev](mailto:founders@humanlayer.dev)
 
-A quick shout out to @calvinfo for inspiration, to my cofounder @0xBlacklight, to @swyx and the team at @aiDotEngineer for giving us an arena and to all our incredible customers, investors, friends, and family cheering us on.
-
 If you wanna learn more, I basically won't shut up about this, so you can find all the links from this post as well as a few other projections of the material into podcasts, long form whiteboard, etc, below.
 
 

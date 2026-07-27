@@ -8,11 +8,13 @@ I've [written before](https://github.com/humanlayer/advanced-context-engineering
 
 That wasn't entirely true. I love nothing more than burying a good lede.
 
-We'll dig into [SlopCodeBench](https://arxiv.org/html/2603.24755v1), a new-ish (March 2026) long-horizon coding benchmark from [@GOrlanski](https://x.com/GOrlanski)'s lab at UW Madison. It addresses the thing that bothers me most about coding benchmarks - that even "larger" more complex ones still divulge the whole problem up front:
+Last Friday I dug into [SlopCodeBench](https://arxiv.org/html/2603.24755v1), a new-ish (March 2026) long-horizon coding benchmark from [@GOrlanski](https://x.com/GOrlanski)'s lab at UW Madison. It addresses the thing that bothers me most about coding benchmarks - that even "larger" more complex benchmarks still divulge the whole problem up front:
 
 <div align="center"><img src="./images/sota-changes-wm-shadow.png" width="70%" alt="Software is discovering problems as you go, but even most modern benchmarks disclose the whole problem up front -- no reason to optimize for 'is this easy to change/adjust later'"></div>
 
-However, each challenge in SlopCodeBench has multiple "checkpoints" - the model doesn't know the whole problem up front, it has to *evolve* the codebase over time as new requirements are divulged. It's a good paper. It's not that long. You should [read it](https://arxiv.org/html/2603.24755v1).
+In contrast, each challenge in SlopCodeBench has multiple "checkpoints" - the model doesn't know the whole problem up front, it has to *evolve* the codebase over time as new requirements are divulged. 
+
+It's a good paper. It's not that long. You should [read it](https://arxiv.org/html/2603.24755v1).
 
 ![the mechanic, from the paper: an initial spec becomes spec 2 becomes spec 3, and the solution goes Good Quality to Degradation Begins to Unmaintainable](images/scb-paper-degradation.png)
 

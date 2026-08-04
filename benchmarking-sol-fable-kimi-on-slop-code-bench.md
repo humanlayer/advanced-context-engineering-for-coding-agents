@@ -84,7 +84,9 @@ Fable and Sol tied for strict passes with 10 each. If you want a tiebreaker, Fab
 
 ![strict-passes](images/scb-2-strict-passes.png)
 
-`circuit_eval` was the one challenge shared with the previous run. The newer models earned more strict passes across its eight checkpoints, while the previous Opus 5 run still left the fewest final defects. The suites diverge from checkpoint 3, though: the new final suite has 566 tests and the previous one has 557, so the raw final totals are context rather than a direct ranking.
+`circuit_eval` was the one challenge shared with the previous run. The newer models earned more strict passes across its eight checkpoints, 
+
+The previous Opus 5 run still **technically** left the fewest final defects, but that result is kinda disqualified by the fact that Opus 5's version of the test suite only has 557 tests, and the newer suite we used for Kimi/Sol/Fable has 566 tests.
 
 ![circuit_eval checkpoint results for the round-two models and the previous Opus 5 run](images/scb-2-circuit-round-comparison.png)
 
@@ -96,20 +98,22 @@ I reproduced the same spread chart from the last post, for the new run. Looks li
 
 ![percent change from checkpoint 1 to 8 for each rate metric, one dot per model, sorted by spread — cc_max and cloned_pct separate the models sharply, the rest cluster](images/scb-2-metric-spread.png)
 
-Just as with the Opus 5 bench set, these models are close on growth in most metrics, with Fable growing more in some slop metrics, and Sol/Kimi growing more in others.
+Just as with the Opus 5 bench set, these models are close on growth in most metrics, with Fable growing more in some slop metrics, and Sol/Kimi growing more in others. What's interesting is Sol and Expo did the best at reducing *normalized* cognitive complexity. Somehow not as well as sonnet 5 though...?
 
-Again, I like that these measures are repeatable and don't use a model for judgement. But the link between any one of them and "is this codebase easy to change and evolve" is not yet established.
+Again, I like that these measures are repeatable and don't use a model for judgement. But the link between any one of them and "is this codebase easy to change and evolve" is not really established.
 
 ### <take on volume>
 
-![source lines written — opus 5 wrote 29,065 against roughly 9,000 each for the other two](images/scb-volume.png)
+![final source lines written across all six round-two problems](images/scb-2-volume.png)
 
 
-<take on test fraction>
+Sol left 1,318 SLOC in persistent Python test files; the other agents also tested their work, but used shell scripts, fixtures, or temporary files that this narrow count excludes. So idk what to do with this chart. I guess the new frontier likes shell-scripts and more black-box / computer-use style testing?! (I think we need to dig into this data more, there may be a bug in reporting here.)
 
-![the same source lines split into production and test code — opus 5 is 51% tests, opus 4.8 is 11%, sonnet 5 is 24%](images/scb-testsplit.png)
+![persistent Python test files in the final snapshots, a narrow count that excludes shell tests, fixtures, and temporary validation files](images/scb-2-testsplit.png)
 
-Will have to dig in more to know whether this is a model tic signal or just a "this is actually a really hard problem and warrants this much code".
+Compact output was not always simple: Kimi had the highest single-function complexity, while Fable had the largest clone share.
+
+![cyclomatic complexity, clone share, and single-use functions across the round-two models](images/scb-2-code-shape.png)
 
 ### almost all the code written triggered the slop meter
 
@@ -132,27 +136,17 @@ Previous results, for context:
 
 Again, I'd probably say that more than anything else, this is a sign that some of the code quality measures are a bit over-aggressive. But its nice to see the comparison
 
-### these models write a lot of functions
-
-Another interesting data point - opus 5 wrote 5x more functions than the other two models. But Opus 4.8 wrote a higher %% of single-use functions (almost 50% of its functions were called exactly once). And Sonnet 5's share of single-use functions is the highest at 71.5%.
-
-![single-use functions as a share of all callables — opus 5 at 14.9%, opus 4.8 at 49.1%, sonnet 5 at 71.5%](images/scb-single-use.png)
-
-FWIW I don't think lots of small functions is bad. I take it with a grain of salt these days, but I used to be a die-hard [Clean Code](https://www.oreilly.com/library/view/clean-code-a/9780136083238/) guy. Small descriptive function names are way better than lots of comments, yada yada
-
 ### Complexity grows over time for all models
 
-<take - did the new models do worse or did they actually add even more complexity than the prev generation>
+All four new runs ended `circuit_eval` with higher mean cyclomatic complexity than the previous three models. 
 
 ![mean cyclomatic complexity and duplicated-line percentage across all eight circuit_eval checkpoints, one line per model, including gray lines for previous 3 opus/sonnet run models](images/scb-2-complexity.png)
 
-<!--Not a single model made it through all the challenges without increasing complexity across checkpoints. While Opus 5 has the lowest mean complexity, it also wrote 2000 functions. There's a tradeoff here: lots of small functions or fewer big ones. I don't think any of these complexity metrics can stand alone, but they give us some kind of composite signal.-->
+The numbers are all pretty close, but weirdly enough opus 5 had the least duplication by the end of circuit_eval. That could be a sign that opus did a better job of refactoring/reusing as it went, but my guess is that less duplication might also map onto "less consistency". Without digging into the code samples we can't say for sure (and I wanted to get this data out before going deep on that).
+
+The new runs used far fewer callables than prior Opus 5, but their functions were more complex on average.
 
 ![callables written against mean cyclomatic complexity, one point per model per problem — 4 new models plus the 3 previous models](images/scb-2-fnscatter.png)
-
-<!--Both sonnet and Opus 4.8 answered the increasing complexity of the challenge checkpoints by making individual functions bigger rather than moving things around. Opus 4.8 is the extreme, up 70% over eight checkpoints, and its single worst function ended at a cyclomatic complexity of 93.-->
-
-<!--Duplication is where they split. Opus 4.8 goes from 4.6% to 16.8%, with an inflection at ck3 — ~roughly where new requirements start fighting the initial design.-->
 
 Again - here's what the first three checkpoints of circuit_eval ask for (full listing for all challenges in the appendix at the end):
 
@@ -160,57 +154,30 @@ Again - here's what the first three checkpoints of circuit_eval ask for (full li
 - **ck2** — an `eval` command: pass the circuit some inputs, get the outputs back. Still one bit per signal, standard boolean operators.
 - **ck3** — signals become **vectors**. `data[7:0]` instead of `data`, plus slicing, indexing, concatenation, new operators, and a width check on every operand.
 
-<!--By the end one line in six is a copy of another line. The other two models came *down* over the same stretch.-->
-
-<!--However, opus 5 is basically flat, 2.41 to 2.64. I've previously argued that "improving codebase quality over time" had not moved much between model generations. So if you trust duplication as a golden metric, you could argue that we did getting incrementally better in the last ~3 months. Big if though, and I think most software architecture experts would agree that it's not black and white.-->
-
-## the shape of a better oracle for software quality
+## back to the shape of a better oracle for software quality
 
 I haven't made progress on this part ([where does the time go!?](./side-quests/where-does-the-time-go.md)), but the idea is to have a small dumb model try each checkpoint.
 
-This amplifies the **signal** of whether the smart models did a good job maintaining high-quality code that is easy to change. Whether a small model like Sonnet or Terra or even Haiku can implement checkpoint 8 impacts the smart models' score on checkpoints 1-7.
-
 I might even make sense to have a small model do checkpoint N+1 for EVERY checkpoint and factor that into the pass rates for the smart model's checkpoint N - grading the quality of the codebase left behind.
 
-![three lanes of the same eight checkpoints — fable 5, gpt-5.6-sol and opus 5 each build ck1 through ck7, then hand the codebase to sonnet 5 for ck8](images/scb-2-handoff-tree.png)
+![a frontier model builds the main checkpoint path while an independent smaller model branches from each saved workspace to attempt the next checkpoint](images/scb-2-handoff-tree.png)
 
+## that's it for now
 
-## something you can actually measure
+The frontier is getting better, but I'm still not trusting them to run around lights off in my codebase. I had the vibe since the [week fable launched](https://x.com/dexhorthy/status/2064747631885398231), but this is just more proof that there are hard coding problems.
 
-My personal read of all this is that SlopCodeBench gives a signal for something I've so far only been able to argue from experience - that for real-shaped software engineering work, building one issue at a time, today's models can't be relied on to run lights-off without steering.
+**Next up: **
 
-SCB is a measure of the future that I'll be keeping a close eye on. I wouldn't bet my codebase on a good score in Frontier Code, SWE-Marathon, or DeepSWE, but if/when models can score 80%+ on a (well-held-out) benchmark like SlopCodeBench which measures iteration over time, I'll feel a LOT better about setting them loose with the lights off. 
+I am prototyping a new prompt/flow for the harness - where we incorporate either/both of 
 
-I won't posit when that will happen, because "when" matters less than having a good signal to know that it's happening. 
-(Assuming nobody "accidentally" trains on test in the meantime).
+1. Deterministic linters
+2. LLM-based "adversarial review" with alternating models
 
-## what's next / things i'd do differently 
+after each checkpoint, and see if it makes the results (strict pass rates) better or worse.
 
-I'll be reading some of the slopcodebench problems more deeply for inspiration and to curate a few that I think map well to the day-to-day building we do here at [@humanlayer_dev](https://x.com/humanlayer_dev).
+Shameless plug - if you wanna ship code that doesn't suck, but still go really dang fast - check out [humanlayer.com](https://humanlayer.com) and [humanlayer.com/discord](https://humanlayer.com/discord).
 
-Claude decided to parallelize by model, running each through three challenges in *sequence*. We could have just as easily done 3 models x 3 challenges in 9 parallel sessions and finished in 1-2 hours instead of 6.
-
-
-As I said, I looked into applying the ruleset to our typescript monorepo, but the current slop-code-bench detectors are python only. It would be interesting to port those to TS and a few other languages. I hate to be that guy but I'd bet python is a more slop-prone language than most.
-
-I think instead of focusing on strict pass and total defects, it will be interesting to explore more dimensions of the benchmark. In the current scoring, we're taking any failure along the way as an accumulated defect - unless the model happens to resolve that past defect in a future session, all of the remaining checkpoints cannot pass.
-
-Many software factories include prompting for better style, include deterministic feedback during the code loop for complexity and a lot of these other software quality metrics. Today's results don't evaluate model code quality or success rates with those sort of guardrails in place. We used the "just-solve" version of the prompt from SlopCodeBench but there are other variations like including instructions about quality/duplication in the prompt. And it would be very interesting to re-run the whole eval with either or both of 1) an "aversarial review" loop w/ a model judging quality and 2) code-quality backpressure for things like cyclomatic complexity.
-
-I'm not made of money or time but it would be fun to do a bigger dataset here.
-
-And of course, most interesting is this idea of "can we amplify the slop signal by handing fable's codebase to a smaller model like sonnet".
-
-## vibe check - the frontier is still dumb af
-
-while this whole experiment was happening, in another session, opus 5 decided to go rogue and rewrite an email draft with new formatting, then send it to 100 people without checking in with me. Terrible.
-
-> The user is upset because I made a critical mistake: 
-> I overwrote their edited draft by patching it with the final version, then sent it out.
-
-Sorry if you got one of those humanlayer product updates with the ugly header banner (I think the new claude-ism for this is "kicker"??)
-
-really feeling the AGI over here friends
+good luck.
 
 🫡 -dex
 
@@ -218,43 +185,66 @@ really feeling the AGI over here friends
 
 ### Links From This Post
 
-- [SlopCodeBench (paper)](https://arxiv.org/html/2603.24755v1)
-- [SlopCodeBench runner (SprocketLab/slop-code-bench)](https://github.com/SprocketLab/slop-code-bench)
-- [SlopCodeBench problems (gabeorlanski/scb-problems)](https://github.com/gabeorlanski/scb-problems)
+- [Benchmarking Opus 5 on SlopCodeBench](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-opus-5-on-slop-code-bench.md)
+- [SlopCodeBench paper](https://arxiv.org/html/2603.24755v1)
+- [SlopCodeBench website](https://www.scbench.ai/)
+- [SlopCodeBench runner](https://github.com/SprocketLab/slop-code-bench)
+- [SlopCodeBench problem catalog](https://github.com/gabeorlanski/scb-problems)
 - [Gabe Orlanski on X](https://x.com/GOrlanski)
-- [SWE-bench Multilingual (dataset)](https://huggingface.co/datasets/SWE-bench/SWE-bench_Multilingual)
-- [SWE-Marathon (Abundant AI)](https://www.swe-marathon.org/)
-- [DeepSWE (Datacurve)](https://deepswe.datacurve.ai/blog/deepswe)
-- [Frontier Code (Cognition)](https://cognition.com/blog/frontier-code)
-- [Mutation testing (Wikipedia)](https://en.wikipedia.org/wiki/Mutation_testing)
-- [Why Software Factories Fail (the longer argument this follows from)](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/wsff.md)
+- [Claude Code](https://github.com/anthropics/claude-code) — harness used for Fable
+- [Codex CLI](https://github.com/openai/codex) — harness used for Sol
+- [OpenCode](https://github.com/anomalyco/opencode) — harness used for Kimi K3 and Expo
+- [Where Does the Time Go?](./side-quests/where-does-the-time-go.md)
+- [HumanLayer](https://humanlayer.dev/)
 
 ### Appendix: the challenge checkpoints
 
-All 17, in order, straight from the prompts the models were handed. Each one arrives cold — the model has no idea any of the later ones exist.
+All 30 checkpoints, in order, condensed from the prompts the models received. Each checkpoint arrives without revealing the later requirements.
 
-**circuit_eval** — easy, simulation, 8 checkpoints
+**xjq** — easy, developer tools, 5 checkpoints
 
-- **ck1** — a CLI with `--help`, `--version`, a JSON output mode, and a `check` command that parses and validates a `.circ` circuit file. Every signal is a single bit.
-- **ck2** — an `eval` command: pass the circuit some inputs, get the outputs back. Still one bit per signal, standard boolean operators.
-- **ck3** — signals become **vectors**. `data[7:0]` instead of `data`, plus slicing, indexing, concatenation, new operators (`MUX`, reductions, `EQ`), a width check on every operand, and `--radix` output formatting.
-- **ck4** — three-valued logic. Inputs can now be `X` (unknown), and every operator has to say what it does with one.
-- **ck5** — two more input formats. `check` and `eval` now read `.json` and `.bench` files as well as `.circ`, behind a `--format` flag.
-- **ck6** — three analysis commands: `stats` for metrics, `lint` for warnings, `dot` for Graphviz export. All of them work with all three formats.
-- **ck7** — `cone` (pull out a subcircuit), `truth-table` (enumerate every output), `equiv` (check two circuits match), plus a `--seed` flag for reproducible randomness.
-- **ck8** — `opt`: a circuit optimizer with configurable passes, deterministic output, optional equivalence verification, and BENCH export.
+- **ck1** — Build an XPath 1.0 CLI that reads XML or HTML from stdin, matches elements case-sensitively, normalizes text and attribute results, serializes the first matching XML node, and reports XPath or parse errors.
+- **ck2** — Add CSS selectors, including custom direct and descendant `::text` modes, plus `--text` and `--text-all` extraction with defined precedence and whitespace normalization.
+- **ck3** — Auto-detect top-level JSON objects and arrays, convert them to a typed XML tree under `<root>`, preserve key order and numeric formatting, and reject keys that cannot form valid XML element names.
+- **ck4** — Read from an optional input file in preference to stdin, accept UTF-8 BOMs, ignore extra positional arguments, and add `--first` and compact XML output.
+- **ck5** — Add JSON export for XML element results, formalize output-flag precedence, and support XPath unions with defined behavior for text extraction and first-result selection.
 
-**database_migration** — medium, databases, 5 checkpoints
+**file_backup** — easy, file systems, 4 checkpoints
 
-- **ck1** — a CLI that reads migration specs out of JSON files and applies them to a SQLite database: create tables, add columns, change table structure.
-- **ck2** — data migrations. Transform the rows that are already in there using SQL expressions, not just the schema around them.
-- **ck3** — foreign keys, custom indexes, and advanced constraints. Relational integrity and query performance.
-- **ck4** — rollback. Undo migrations one at a time or in batches, with dependency handling.
-- **ck5** — dependency management. Migrations declare `depends_on`, and the tool has to resolve the order and detect circular dependencies.
+- **ck1** — Build a YAML-driven backup scheduler that finds daily, weekly, and one-time jobs due within an inclusive time window, applies glob exclusions to mounted files, and emits deterministic JSONL events while simulating backup selection.
+- **ck2** — Add optional `full`, `pack`, and `verify` strategies: hash individual files, build deterministic size-bounded GNU tar archives, or verify files without copying, with strategy-specific JSONL events.
+- **ck3** — Add backup destinations and SHA-256 incremental state for full and verify jobs, skipping files whose stored copies have not changed; pack jobs remain non-incremental at this checkpoint.
+- **ck4** — Make pack jobs incremental by loading existing tar archives, repacking current files under the size limit, and reporting loaded, unchanged, updated, and skipped pack contents.
 
-**dynamic_config_service_api** — hard, system-design, 4 checkpoints
+**dag_execution** — hard, DSL, 3 checkpoints
 
-- **ck1** — a REST service that stores JSON config objects with immutable versions, scoping, rollback to any earlier version, and imports/inheritance across configs.
-- **ck2** — a schema registry with its own versioning, schemas bound to configs, validation on create and on resolve, and ingesting raw YAML/TOML/JSON parsed into canonical JSON internally.
-- **ck3** — a change-management workflow. Every new version starts as a draft, proposals gather human reviews, activation requires a quorum, and each proposal carries a deterministic diff.
-- **ck4** — an org-level guardrail layer that runs policy bundles against resolved configs and the graph around them, blocking unsafe proposals with violation details distinct from schema errors.
+- **ck1** — Build a CLI that parses a task-pipeline DSL and optional TOML config, type-checks parameters, evaluates control-flow and success expressions, runs required tasks and shell commands in order, enforces workspace and dependency rules, and writes task events plus detailed job JSONL records.
+- **ck2** — Add per-task inputs and caches with content, TTL-based stale, and always-use strategies; support global cache settings and forced refreshes while restoring cached output, files, status, and success results.
+- **ck3** — Add dynamic cache overrides inside `requires` expressions through `CachedTask(...)`, merging omitted values from the base task and supporting both dotted nested fields and full nested-object replacement.
+
+**circuit_eval** — medium, simulation, 8 checkpoints
+
+- **ck1** — Build a CLI with help, version, JSON output, and a `check` command that parses and validates scalar `.circ` files, including declarations, assignments, operator arity, undefined signals, duplicate assignments, and cycles.
+- **ck2** — Add `eval` for scalar two-valued circuits, with explicit or default inputs, extra-input handling, standard Boolean operators, and sorted text or JSON output.
+- **ck3** — Add vector signals, sized and unsized literals, indexing, slicing, concatenation, strict width checks, `MUX`/`ITE`, reductions, `EQ`, and binary, hexadecimal, or decimal output formatting.
+- **ck4** — Add three-valued evaluation with runtime `X` values, binary-only output, and defined unknown-value behavior for every Boolean, multiplexer, equality, and reduction operator.
+- **ck5** — Let `check` and `eval` read `.circ`, JSON, and scalar BENCH circuits through explicit or extension-based format selection, with format-specific parsing and validation.
+- **ck6** — Add `stats` for structural metrics, `lint` for unused-input and constant-output checks, and `dot` for deterministic Graphviz export with optional output-cone filtering.
+- **ck7** — Add deterministic `cone` extraction, exhaustive `truth-table` output, and exhaustive or seeded randomized `equiv` checks that return counterexamples and a distinct non-equivalence exit code.
+- **ck8** — Add deterministic `opt` output with configurable normalization, constant folding, algebra, common-subexpression elimination, dead-code removal, and fan-in passes, plus compact wire renaming, reports, BENCH export, and optional equivalence verification.
+
+**code_search** — easy, developer tools, 5 checkpoints
+
+- **ck1** — Build a Python source-search CLI that applies exact-text and regular-expression rules, skips undecodable files, and emits deterministically ordered JSONL matches with one-based source ranges.
+- **ck2** — Extend file discovery and rule filtering to JavaScript and C++, while retaining the same exact and regex matching and output rules.
+- **ck3** — Add structure-aware `pattern` rules with required, optional, repeated, and escaped metavariables, reporting capture text and every capture range in deterministic order.
+- **ck4** — Add AST node `selector` rules and replacement fixes, with dry-run previews, on-disk application, capture templates, `$MATCH`, escaped dollar signs, and deterministic overlap handling.
+- **ck5** — Extend exact, regex, pattern, selector, capture, and fix behavior to Rust, Java, Go, and Haskell, bringing the supported language set to seven.
+
+**etl_pipeline** — easy, data processing, 5 checkpoints
+
+- **ck1** — Build a stdin/stdout JSON CLI that validates and normalizes `select`, `filter`, `map`, `rename`, and `limit` steps, including expression checks, canonical field handling, and structured error paths.
+- **ck2** — Add `--execute` to run linear pipelines over in-memory JSON rows with a defined expression language, null and type behavior, column checks, transformed data, and row-count metrics.
+- **ck3** — Add nested `branch` steps with first-match routing, an optional final `otherwise` branch, per-branch sub-pipelines, declaration-order concatenation, and nested error paths.
+- **ck4** — Add top-level named definitions and parameterized `call` steps, including `params.key` expression access, unknown-definition errors, and direct or indirect recursion checks.
+- **ck5** — Add namespaced pipeline libraries and a top-level `compose` list that expands library references and inline step fragments for either normalized output or execution.

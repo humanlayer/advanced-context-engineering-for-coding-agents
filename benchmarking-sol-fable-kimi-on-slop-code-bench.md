@@ -4,13 +4,13 @@
 
 Last week when Opus 5 came out, I [ran some benchmarks](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-opus-5-on-slop-code-bench.md) against my favorite new coding agent eval - [SlopCodeBench](https://arxiv.org/abs/2603.24755).
 
-The number one takeaway: this is a hard benchmark and even brand-new models didn't break 35% pass rate (that's 2024 SWE-Bench territory, the sonnet 3.5 days).
+The primary takeaway was: this is a hard benchmark and even brand-new models didn't break 35% pass rate (that's 2024 SWE-Bench territory, the sonnet 3.5 days).
 
-The number one ask people had: where do Fable, Sol, and Kimi K3 land?
+But everyone was asking: where do Fable, Sol, and Kimi K3 land?
 
 So on Thursday I ran it again, for
 
-1) Fable, Sol, Kimi K3, and an undisclosed model ("Expo")
+1) Fable, Sol, Kimi K3, and an undisclosed stealth model ("Expo")
 2) a larger subset of problems: six challenges and 30 checkpoints per model
 
 ### The Results
@@ -79,9 +79,9 @@ If our definition of success is "reached the final checkpoint with no defects" t
 
 ![defects left open at the end of each problem](images/scb-2-defects.png)
 
-As far as cost vs. defects go, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Expo is not plotted because its saved cost is unavailable.
+As far as cost vs. final defect rate goes, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Expo is not plotted because its saved cost is unavailable.
 
-![cost vs defects, one point per model per problem](images/scb-2-cost-defects.png)
+![cost vs final defect rate, where defect rate is the share of final hidden tests left failing](images/scb-2-cost-defect-rate.png)
 
 Fable and Sol tied for strict passes with 10 each. If you want a tiebreaker, Fable got 16 **isolated** passes while Sol got only 14.
 

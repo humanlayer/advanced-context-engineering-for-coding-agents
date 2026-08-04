@@ -84,7 +84,7 @@ If our definition of success is "reached the final checkpoint with no defects" t
 
 ![defects left open at the end of each problem](images/scb-2-defects.png)
 
-As far as cost vs. final defect rate goes, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Kimi K3 (Modal) is not plotted because its saved cost is unavailable.
+As far as cost vs. final defect rate goes, we see a similarly vague inverse relationship. Modal did not report a cost, so I estimated its **$26.93** total from the saved token counts using the same rates as Baseten: $3/M input, $0.30/M cache read, and $15/M output.
 
 ![cost vs final defect rate, where defect rate is the share of final hidden tests left failing](images/scb-2-cost-defect-rate.png)
 

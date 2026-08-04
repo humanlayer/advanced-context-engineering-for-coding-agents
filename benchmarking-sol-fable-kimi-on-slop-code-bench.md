@@ -18,6 +18,9 @@ So on Thursday I ran it again, for
 
 > **The two Kimi K3 runs scored close to each other and traded wins across a number of dimensions. I only did one run on each provider, so these results should not be read as statistically significant or as an endorsement of either provider. They're both awesome!**
 
+
+Thanks to both Modal and Basten for sponsoring the Kimi inference for this benchmark!
+
 ### The Results
 
 Fable and Sol tied on this set at **33.3%** (10/30 strict checkpoint passes), with Kimi K3 (Modal) and Kimi K3 (Baseten) close behind at **26.7%** and **23.3%**, respectively.
@@ -173,6 +176,8 @@ I might even make sense to have a small model do checkpoint N+1 for EVERY checkp
 ## that's it for now
 
 The frontier is getting better, but I'm still not trusting them to run around lights off in my codebase. I had the vibe since the [week fable launched](https://x.com/dexhorthy/status/2064747631885398231), but this is just more proof that there are hard coding problems.
+
+Thanks again to both Modal and Basten for sponsoring the Kimi inference for this benchmark!
 
 **Next up: **
 

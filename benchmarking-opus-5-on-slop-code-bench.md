@@ -1,18 +1,22 @@
 # Benchmarking Opus 5 on SlopCodeBench
 
+![Benchmarking Opus 5 on SlopCodeBench](images/scb-title-card.png)
+
 ## we got better benchmarks
 
 I've [written before](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/wsff.md) something along the lines of:
 
 <blockquote align="center"><h3>THERE ARE NO GOOD BENCHMARKS for a model's ability to maintain codebase quality</h3></blockquote>
 
-That wasn't entirely true. This post is me correcting it.
+That wasn't entirely true. I love nothing more than burying a good lede.
 
-We'll dig into [SlopCodeBench](https://arxiv.org/html/2603.24755v1), a new-ish (March 2026) long-horizon coding benchmark from [@GOrlanski](https://x.com/GOrlanski)'s lab at UW Madison. It addresses the thing that bothers me most about coding benchmarks - that even "larger" more complex ones still divulge the whole problem up front:
+Last Friday I dug into [SlopCodeBench](https://arxiv.org/html/2603.24755v1), a new-ish (March 2026) long-horizon coding benchmark from [@GOrlanski](https://x.com/GOrlanski)'s lab at UW Madison. It addresses the thing that bothers me most about coding benchmarks - that even "larger" more complex benchmarks still divulge the whole problem up front:
 
 <div align="center"><img src="./images/sota-changes-wm-shadow.png" width="70%" alt="Software is discovering problems as you go, but even most modern benchmarks disclose the whole problem up front -- no reason to optimize for 'is this easy to change/adjust later'"></div>
 
-However, each challenge in SlopCodeBench has multiple "checkpoints" - the model doesn't know the whole problem up front, it has to *evolve* the codebase over time as new requirements are divulged. It's a good paper. It's not that long. You should [read it](https://arxiv.org/html/2603.24755v1).
+In contrast, each challenge in SlopCodeBench has multiple "checkpoints" - the model doesn't know the whole problem up front, it has to *evolve* the codebase over time as new requirements are divulged. 
+
+It's a good paper. It's not that long. You should [read it](https://arxiv.org/html/2603.24755v1).
 
 ![the mechanic, from the paper: an initial spec becomes spec 2 becomes spec 3, and the solution goes Good Quality to Degradation Begins to Unmaintainable](images/scb-paper-degradation.png)
 
@@ -25,7 +29,6 @@ What's cool about this benchmark is that it is **unsaturated** - at the time of 
 
 On Friday I ran three claude models (Opus 4.8, Sonnet 5, and Opus 5) through a subset of [SlopCodeBench](https://arxiv.org/html/2603.24755v1) and watched it live for six hours. Opus 5 wins technically but none of them did a very good job IMO. Will post more results soon with Fable and 5.6 Sol in the mix.
 
-![Benchmarking Opus 5 on SlopCodeBench](images/scb-title-card.png)
 
 The big headline is that Opus 5 got a **24%** on the small subset of the benchmark that I ran - not much higher than Opus 4.6's 17% strict pass rate in the original paper. All of the tested models showed a pretty significant increase in verbosity, complexity, and a bunch of other code smell metrics over the course of each challenge, with Opus 5 writing **five times** the number of functions/callables than Opus 4.8 over the course of the same set of challenges.
 

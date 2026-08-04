@@ -10,14 +10,14 @@ The number one ask people had: where do Fable, Sol, and Kimi K3 land?
 
 So on Thursday I ran it again, for
 
-1) Fable, Sol, Kimi K3, and a undisclosed model ("Expo")
-2) a larger subset of problems: [...fill in...]
+1) Fable, Sol, Kimi K3, and an undisclosed model ("Expo")
+2) a larger subset of problems: six challenges and 30 checkpoints per model
 
 ### The Results
 
-Fable and Sol Tied for this set at **33.3%** pass rate (10/30 strict checkpoint passes), with stealth model and Kimi K3 close behind at **26.7%** and **23.3%**, respectively.
+Fable and Sol tied on this set at **33.3%** (10/30 strict checkpoint passes), with Expo and Kimi K3 close behind at **26.7%** and **23.3%**, respectively.
 
-![...fill](./images/scb-2-pass-rates.png)
+![strict checkpoint pass rates for the two independent subset runs and the SlopCodeBench v2 paper](./images/scb-2-pass-rates.png)
 
 I'll refresh on how slop code bench works real quick, or you can jump to the detailed results.
 
@@ -39,11 +39,14 @@ The biggest takeaway from "the fact that SlopCodeBench is
 
 i pinged Gabe and asked him for a slightly broader subset of problems for this run - this one ran with 6 challenges, with circuit_eval being the overlap challenge. These are subsets, meant to be **directional**, not exhaustive.
 
-- ...fill in....
-- circuit_eval — **easy** (8 checkpoints)
-- ...fill in....
+- `xjq` — **easy** (5 checkpoints): an XML, HTML, and JSON query CLI that grows from XPath into CSS selectors and structured output
+- `file_backup` — **easy** (4 checkpoints): a scheduled backup tool that adds archive strategies, destinations, verification, and incremental state
+- `dag_execution` — **hard** (3 checkpoints): a task-pipeline DSL with execution, caching, and dynamic cache overrides
+- `circuit_eval` — **medium** (8 checkpoints): a circuit parser and evaluator that grows into vectors, three-valued logic, analysis, equivalence, and optimization
+- `code_search` — **easy** (5 checkpoints): a multi-language code-search and rewrite tool with regex, structural patterns, AST selectors, and fixes
+- `etl_pipeline` — **easy** (5 checkpoints): a JSON ETL pipeline that adds execution, branches, reusable definitions, and namespaced composition
 
-There's an appendix at the end with all ..fill in... checkpoints explained in detail but I won't put that all here.
+There's an appendix at the end with all 30 checkpoints explained in detail, but I won't put that all here.
 
 and then I ran them across all four models, in parallel, with a fresh context window per checkpoint. All models got the same prompts, and a mix of harnesses:
 
@@ -76,7 +79,7 @@ If our definition of success is "reached the final checkpoint with no defects" t
 
 ![defects left open at the end of each problem](images/scb-2-defects.png)
 
-As far as cost vs. defects go, we see a totally different curve from the opus 5 eval. Expo is not plotted because we wont publish $/mtok for that one.
+As far as cost vs. defects go, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Expo is not plotted because its saved cost is unavailable.
 
 ![cost vs defects, one point per model per problem](images/scb-2-cost-defects.png)
 

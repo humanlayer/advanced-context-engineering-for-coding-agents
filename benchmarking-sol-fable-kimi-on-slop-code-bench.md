@@ -8,7 +8,7 @@ Last week when Opus 5 came out, I [ran some benchmarks](https://github.com/human
 
 The primary takeaway was: this is a hard benchmark and even brand-new models didn't break 35% pass rate (that's 2024 SWE-Bench territory, the sonnet 3.5 days).
 
-But everyone was asking: where do Fable, Sol, and Kimi K3 land?
+But everyone was asking: where do **Fable, Sol, and Kimi K3 land?**
 
 So on Thursday I ran it again, for
 

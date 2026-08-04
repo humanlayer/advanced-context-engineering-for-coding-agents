@@ -1,5 +1,7 @@
 # Benchmarking Fable, Sol, and Kimi K3 on SlopCodeBench
 
+**Thanks to Modal and Baseten for sponsoring the Kimi inference on this benchmark.**
+
 ![title](./images/scb-2-title.png)
 
 Last week when Opus 5 came out, I [ran some benchmarks](https://github.com/humanlayer/advanced-context-engineering-for-coding-agents/blob/main/benchmarking-opus-5-on-slop-code-bench.md) against my favorite new coding agent eval - [SlopCodeBench](https://arxiv.org/abs/2603.24755).
@@ -10,12 +12,15 @@ But everyone was asking: where do Fable, Sol, and Kimi K3 land?
 
 So on Thursday I ran it again, for
 
-1) Fable, Sol, Kimi K3, and an undisclosed stealth model ("Expo")
+1) Fable, Sol, Kimi K3 on Baseten (red), and Kimi K3 on Modal (green)
 2) a larger subset of problems: six challenges and 30 checkpoints per model
+
+
+> **The two Kimi K3 runs scored close to each other and traded wins across a number of dimensions. I only did one run on each provider, so these results should not be read as statistically significant or as an endorsement of either provider. They're both awesome!**
 
 ### The Results
 
-Fable and Sol tied on this set at **33.3%** (10/30 strict checkpoint passes), with Expo and Kimi K3 close behind at **26.7%** and **23.3%**, respectively.
+Fable and Sol tied on this set at **33.3%** (10/30 strict checkpoint passes), with Kimi K3 (Modal) and Kimi K3 (Baseten) close behind at **26.7%** and **23.3%**, respectively.
 
 ![strict checkpoint pass rates for the two independent subset runs and the SlopCodeBench v2 paper](./images/scb-2-pass-rates.png)
 
@@ -52,8 +57,8 @@ and then I ran them across all four models, in parallel, with a fresh context wi
 
 - Fable - Claude Code 2.1.219
 - Sol - Codex CLI 0.145.0
-- Kimi K3 - OpenCode 1.18.0
-- Expo (stealth) - OpenCode 1.18.0
+- Kimi K3 (Baseten) - OpenCode 1.18.0
+- Kimi K3 (Modal) - OpenCode 1.18.0
 
 the metric we decided on for the first benchmark is the **strict pass**: everything new is green including every regression test that was inherited from previous checkpoints. So I carried that forward here.
 
@@ -79,7 +84,7 @@ If our definition of success is "reached the final checkpoint with no defects" t
 
 ![defects left open at the end of each problem](images/scb-2-defects.png)
 
-As far as cost vs. final defect rate goes, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Expo is not plotted because its saved cost is unavailable.
+As far as cost vs. final defect rate goes, we see a totally different curve from the Opus 5 eval. The chart uses the share of final tests left failing so the three- and six-problem subsets can share one scale; Kimi K3 (Modal) is not plotted because its saved cost is unavailable.
 
 ![cost vs final defect rate, where defect rate is the share of final hidden tests left failing](images/scb-2-cost-defect-rate.png)
 
@@ -101,7 +106,7 @@ I reproduced the same spread chart from the last post, for the new run. Looks li
 
 ![percent change from checkpoint 1 to 8 for each rate metric, one dot per model, sorted by spread — cc_max and cloned_pct separate the models sharply, the rest cluster](images/scb-2-metric-spread.png)
 
-Just as with the Opus 5 bench set, these models are close on growth in most metrics, with Fable growing more in some slop metrics, and Sol/Kimi growing more in others. What's interesting is Sol and Expo did the best at reducing *normalized* cognitive complexity. Somehow not as well as sonnet 5 though...?
+Just as with the Opus 5 bench set, these models are close on growth in most metrics, with Fable growing more in some slop metrics, and Sol/Kimi growing more in others. What's interesting is Sol and Kimi K3 (Modal) did the best at reducing *normalized* cognitive complexity. Somehow not as well as sonnet 5 though...?
 
 Again, I like that these measures are repeatable and don't use a model for judgement. But the link between any one of them and "is this codebase easy to change and evolve" is not really established.
 
@@ -126,8 +131,8 @@ Results from this run:
 
 - Fable 5 — **86%**
 - GPT-5.6 Sol — **95%**
-- Kimi K3 — **82%**
-- Expo — **79%**
+- Kimi K3 (Baseten) — **82%**
+- Kimi K3 (Modal) — **79%**
 
 Previous results, for context:
 
@@ -196,7 +201,7 @@ good luck.
 - [Gabe Orlanski on X](https://x.com/GOrlanski)
 - [Claude Code](https://github.com/anthropics/claude-code) — harness used for Fable
 - [Codex CLI](https://github.com/openai/codex) — harness used for Sol
-- [OpenCode](https://github.com/anomalyco/opencode) — harness used for Kimi K3 and Expo
+- [OpenCode](https://github.com/anomalyco/opencode) — harness used for both Kimi K3 runs
 - [Where Does the Time Go?](./side-quests/where-does-the-time-go.md)
 - [HumanLayer](https://humanlayer.dev/)
 

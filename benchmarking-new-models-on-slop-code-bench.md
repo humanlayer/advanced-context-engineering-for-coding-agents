@@ -17,7 +17,7 @@ That's the main result from my latest SlopCodeBench runs on:
 
 They often get the main behavior right without getting everything right. And higher effort isn't a reliable fix: XHigh costs **2.11-4.22x** as much as Medium in the three complete pairs, and most notably, **opus 5.5 did *BETTER* on medium effort than on xhigh**
 
-Over the past few months I was running subsets of the bench, I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. The earlier subsets don't establish improvement or decline; this is a broader test, that lets us compare against the official research findings.
+Over the past few months, I ran subsets of the bench. I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. We can't use the earlier subsets to measure improvement or decline. The full benchmark lets us compare these results with the official research findings.
 
 ## what I ran
 
@@ -27,7 +27,7 @@ Getting the next feature mostly right isn't enough if the old ones stop working.
 
 I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 
 
-Each model,effort pair gets one campaign. Checkpoints within a problem build on earlier code, so 196 checkpoints are not 196 independent trials. Problems also have different numbers of checkpoints. These rates weight checkpoints equally, not problems equally.
+I ran each model and effort setting once. Each checkpoint builds on the code from earlier checkpoints, so these aren't 196 independent trials. Some problems have more checkpoints than others. Each checkpoint counts equally toward the pass rate, so problems with more checkpoints have more weight.
 
 The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5 Max and GPT-6.1 SOL XHigh were still ongoing; stay tuned for those results soon.
 
@@ -53,7 +53,7 @@ The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5
 | Opus 5.5 XHigh | 25/196 | 12.76% | 71.94% | $817.04 |
 | GLM 5.3 XHigh | 24/196 | 12.24% | 66.33% | $365.13 |
 
-Fable's recorded total includes two completed checkpoints with zero cost and zero token metering despite recorded agent steps. Its score is sound, but $1,550.07 is not a verified full economic cost.
+The cost records show zero dollars and zero tokens for two Fable checkpoints, even though the agent took steps to complete them. That doesn't affect its pass score, but the recorded $1,550.07 may not include its full cost.
 
 Astra XHigh has the most strict passes in this snapshot. But it's lead over SOL 6.1 Medium is only **two checkpoints**.
 
@@ -104,7 +104,7 @@ Checkpoint success also isn't the same as ending with a working program.
 
 My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
 
-We measure the code left in each project's final saved version, not just the program's entrypoint. Tests, scratch scripts, and generated copies count because they're still there for someone to maintain or clean up. Installed libraries don't count: we're evaluating the project, not the packages it depends on. We exclude dependency folders and caches from both versions of the analysis.
+We measure the code left in each project's final saved version, not just the program's entrypoint. Tests, scratch scripts, and generated copies count because they're still there for someone to maintain or clean up. Installed libraries don't count: we're evaluating the project, not the packages it depends on. We use a fixed list of folder names to exclude installed packages, virtual environments, and caches from both analyses.
 
 The main results keep the leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers without assuming those files should get a free pass. The rules and the actual difference are below.
 
@@ -114,7 +114,7 @@ These figures cover **the same 28 problems for all ten completed runs**, not all
 
 *Main score, lowest first. Filtering doesn't change the order. A flagged line isn't necessarily a broken line.*
 
-The scanner flags code patterns and repeated code within each file. Coverage is the share of source lines those checks flag, counting each line once. A check can flag a whole function without every line being a problem. We add up the lines across all 28 problems before calculating the percentage, so larger programs have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
+The scanner flags code patterns and repeated code within each file. Coverage is the share of source lines flagged by those checks. We count each line only once, even if several checks flag it. A check can flag a whole function without every line being a problem. We total the flagged lines and source lines across all 28 problems, then divide to get the percentage. Larger programs therefore have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
 
 Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium. But it passes fewer checkpoints strictly: 25 versus 28. A smaller share of its code gets flagged, but it doesn't pass more checkpoints. I'm keeping those scores separate rather than declaring an overall winner.
 
@@ -128,7 +128,7 @@ For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scra
 
 *Fable has the lowest mean complexity, 3.57; GPT-6 SOL Medium has the highest, 11.70. Functions and methods each get one vote.*
 
-Splitting code into more helper functions can lower average complexity without making it easier to change. Less code isn't always better either. These numbers help us see what models leave behind, but we still need to read the code and check whether it works.
+Splitting code into more helper functions can lower average complexity without making the code easier to change. Less code isn't always better either. These numbers help us see what models leave behind, but we still need to read the code and check whether it works.
 
 ## my takeaway
 

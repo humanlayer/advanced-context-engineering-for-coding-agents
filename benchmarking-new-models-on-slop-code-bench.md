@@ -23,6 +23,8 @@ Over the past few months, I ran subsets of the bench. I [started with three prob
 
 [SlopCodeBench](https://arxiv.org/abs/2603.24755) gives a coding agent a problem in stages. It writes a program, gets new requirements, and changes the existing code. Later checkpoints test both new behavior and old behavior.
 
+![Diagram from the SlopCodeBench paper: new requirements arrive in stages, and code quality can degrade as the agent changes its solution.](./images/scb-paper-degradation.png)
+
 Getting the next feature mostly right isn't enough if the old ones stop working.
 
 I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 

@@ -1,5 +1,7 @@
 # SlopCodeBench update 10/2026 - Astra improves by 1.5% over gpt-5.5, xhigh considered harmful
 
+> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
+
 In May, gpt-5.5 got a 14.8% strict pass rate on slopcodebench. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting 16.3%. 
 
 
@@ -98,12 +100,38 @@ Checkpoint success also isn't the same as ending with a working program.
 | Opus 5.5 XHigh | 1 | 2,446 | 2,123 |
 | GLM 5.3 XHigh | 1 | 2,748 | 2,311 |
 
-## code quality: I'm not ranking this yet
+## code quality: count what gets left behind
 
-We hit some issues in how the eval harness evaluates file size / code quality for the work the model did, with a lot of random temp files used by models to check their work getting counted in code quality evals. We'll have to spend some more time with this part of the eval before I can give you numbers that I think are useful information without too much noise.
+My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
+
+So the main count uses all source the benchmark's native scanner measures in the saved final code, including tests and `tests/_work`. Both the main count and a separate filtered comparison exclude declared installed-dependency, virtual-environment, and cache paths. None of those paths matched source files here; that doesn't prove we've found every possible custom dependency folder. We're measuring saved output, not external evaluator files, and not proving that every file was model-authored.
+
+These figures cover **28 matched problems across ten complete campaigns**, not all 36 problems. Eight problems lack reliable scanner coverage, so we leave them out for every campaign. Missing measurements aren't clean code.
+
+![Ten campaigns ranked from lowest to highest SLOC-weighted heuristic coverage across 28 matched problems. Opus XHigh is lowest at 77.75%; Opus Medium is highest at 94.25%, or 92.90% after filtering.](./images/scb-3-quality-slop-coverage.png)
+
+*Main coverage, lowest first. The filtered comparison leaves the order unchanged. These are heuristic percentages, not percentages of defective lines.*
+
+Coverage counts unique source lines covered by the scanner's pattern-rule spans or within-file clones, then divides by total source lines (SLOC). A rule can cover a whole function; it doesn't mean every covered line is broken. We sum covered lines and SLOC across problems before dividing, so larger programs count more. **This is SLOC-weighted, not the mean of per-problem percentages used in the earlier posts.**
+
+Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium, despite worse strict checkpoint scores: 25 versus 28. Less flagged code and more passing checkpoints are different results. I'm not combining them into an overall model ranking.
+
+![Total source lines across 28 matched final problems per campaign. Opus Medium has 216,881 SLOC, including 41,265 removed by the deterministic filter, leaving 175,616.](./images/scb-3-quality-volume.png)
+
+*Opus Medium has the largest source total with or without filtering. The removed portion is not all test code.*
+
+The filtered check removes only named folders: `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, and `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. It doesn't try to guess which code looks generated, and it doesn't remove tests as a group. Here, only `_work` matched: **45 files and 41,265 SLOC**, all in Opus Medium's final `dynamic_buffer` snapshot. Its total falls from **216,881 to 175,616 SLOC**, and coverage falls to **92.90%**. The coverage ranking stays the same; every other campaign's counts stay the same too.
+
+![Functions and methods alongside callable-weighted mean complexity. Fable has 8,967 callables and mean complexity 3.57; GPT-6 SOL Medium has 1,083 and mean complexity 11.70.](./images/scb-3-quality-callables.png)
+
+*Fable has the lowest mean complexity, 3.57; GPT-6 SOL Medium has the highest, 11.70. Functions and methods each get one vote.*
+
+More helpers can lower average complexity without making the code easier to change. Smaller code isn't automatically better either. These measurements tell us what remains in the saved codebase; they don't replace reading it or checking whether it works.
 
 ## my takeaway
 
 The full benchmark is hard in a way that matters to me: the agents get the main behavior right much more often than they keep **all** tested behavior working as requirements change.
 
 We're getting better at maintaing a codebase over time (14.8% to 16.3% during may->september), but not as fast as anyone would have you believe. I think we'll be keeping the lights on for a while to come.
+
+> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.

@@ -104,7 +104,9 @@ Checkpoint success also isn't the same as ending with a working program.
 
 My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
 
-For the main score, we run the benchmark's code scanner on the files left at the end, including tests and `tests/_work`. We also show a filtered score for comparison. Both leave out installed packages, virtual environments, and caches using a fixed list of folder names. We didn't find source files in those folders, though packages installed somewhere unusual could still slip through. We only scan the saved code, not files the evaluator creates elsewhere. We also can't say the model wrote every file it left behind.
+We measure the code left in each project's final saved version, not just the program's entrypoint. Tests, scratch scripts, and generated copies count because they're still there for someone to maintain or clean up. Installed libraries don't count: we're evaluating the project, not the packages it depends on. We exclude dependency folders and caches from both versions of the analysis.
+
+The main results keep the leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers without assuming those files should get a free pass. The rules and the actual difference are below.
 
 These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems, so we left those problems out for every model. A missing result doesn't mean the code is clean.
 

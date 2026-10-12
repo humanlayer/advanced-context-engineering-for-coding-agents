@@ -104,29 +104,29 @@ Checkpoint success also isn't the same as ending with a working program.
 
 My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
 
-So the main count uses all source the benchmark's native scanner measures in the saved final code, including tests and `tests/_work`. Both the main count and a separate filtered comparison exclude declared installed-dependency, virtual-environment, and cache paths. None of those paths matched source files here; that doesn't prove we've found every possible custom dependency folder. We're measuring saved output, not external evaluator files, and not proving that every file was model-authored.
+For the main score, we run the benchmark's code scanner on the files left at the end, including tests and `tests/_work`. We also show a filtered score for comparison. Both leave out installed packages, virtual environments, and caches using a fixed list of folder names. We didn't find source files in those folders, though packages installed somewhere unusual could still slip through. We only scan the saved code, not files the evaluator creates elsewhere. We also can't say the model wrote every file it left behind.
 
-These figures cover **28 matched problems across ten complete campaigns**, not all 36 problems. Eight problems lack reliable scanner coverage, so we leave them out for every campaign. Missing measurements aren't clean code.
+These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems, so we left those problems out for every model. A missing result doesn't mean the code is clean.
 
 ![Ten campaigns ranked from lowest to highest SLOC-weighted heuristic coverage across 28 matched problems. Opus XHigh is lowest at 77.75%; Opus Medium is highest at 94.25%, or 92.90% after filtering.](./images/scb-3-quality-slop-coverage.png)
 
-*Main coverage, lowest first. The filtered comparison leaves the order unchanged. These are heuristic percentages, not percentages of defective lines.*
+*Main score, lowest first. Filtering doesn't change the order. A flagged line isn't necessarily a broken line.*
 
-Coverage counts unique source lines covered by the scanner's pattern-rule spans or within-file clones, then divides by total source lines (SLOC). A rule can cover a whole function; it doesn't mean every covered line is broken. We sum covered lines and SLOC across problems before dividing, so larger programs count more. **This is SLOC-weighted, not the mean of per-problem percentages used in the earlier posts.**
+The scanner flags code patterns and repeated code within each file. Coverage is the share of source lines those checks flag, counting each line once. A check can flag a whole function without every line being a problem. We add up the lines across all 28 problems before calculating the percentage, so larger programs have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
 
-Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium, despite worse strict checkpoint scores: 25 versus 28. Less flagged code and more passing checkpoints are different results. I'm not combining them into an overall model ranking.
+Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium. But it passes fewer checkpoints strictly: 25 versus 28. A smaller share of its code gets flagged, but it doesn't pass more checkpoints. I'm keeping those scores separate rather than declaring an overall winner.
 
 ![Total source lines across 28 matched final problems per campaign. Opus Medium has 216,881 SLOC, including 41,265 removed by the deterministic filter, leaving 175,616.](./images/scb-3-quality-volume.png)
 
-*Opus Medium has the largest source total with or without filtering. The removed portion is not all test code.*
+*Opus Medium leaves the most code, even after filtering. We don't remove all tests.*
 
-The filtered check removes only named folders: `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, and `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. It doesn't try to guess which code looks generated, and it doesn't remove tests as a group. Here, only `_work` matched: **45 files and 41,265 SLOC**, all in Opus Medium's final `dynamic_buffer` snapshot. Its total falls from **216,881 to 175,616 SLOC**, and coverage falls to **92.90%**. The coverage ranking stays the same; every other campaign's counts stay the same too.
+For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, or `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. We use the same rules for every run. We don't guess whether code looks generated or exclude tests as a group. In these runs, the filter only removed `_work` files: **45 files and 41,265 source lines**, all from Opus Medium's final `dynamic_buffer` code. Its total drops from **216,881 to 175,616 source lines**, and coverage drops to **92.90%**. It still ranks last on coverage. The filter changes nothing for the other models.
 
 ![Functions and methods alongside callable-weighted mean complexity. Fable has 8,967 callables and mean complexity 3.57; GPT-6 SOL Medium has 1,083 and mean complexity 11.70.](./images/scb-3-quality-callables.png)
 
 *Fable has the lowest mean complexity, 3.57; GPT-6 SOL Medium has the highest, 11.70. Functions and methods each get one vote.*
 
-More helpers can lower average complexity without making the code easier to change. Smaller code isn't automatically better either. These measurements tell us what remains in the saved codebase; they don't replace reading it or checking whether it works.
+Splitting code into more helper functions can lower average complexity without making it easier to change. Less code isn't always better either. These numbers help us see what models leave behind, but we still need to read the code and check whether it works.
 
 ## my takeaway
 

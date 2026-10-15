@@ -1,6 +1,6 @@
 # SlopCodeBench update 10/2026 - Opus 5.5 update, Astra improves by 1.5% over gpt-5.5, xhigh considered harmful
 
-> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
+> **NOTE:** This is Part I of our October 2026 writeup: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
 
 > For my previous writeups on SlopcodeBench, see [benchmarking-opus-5-on-slop-code-bench.md](./benchmarking-opus-5-on-slop-code-bench.md) and [benchmarking-sol-fable-kimi-on-slop-code-bench.md](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). Both include deeper dives on the core structure of SCB and how each of its challenges is broken into checkpoints.
 
@@ -101,35 +101,44 @@ Checkpoint success also isn't the same as ending with a working program.
 
 ## code quality findings - blurry
 
-First - the models left a ton of junk and scratch code while working. 
+First - the models left a ton of junk and scratch code while working. My first reaction was to remove the random temp files from the quality scores. But I chatted with [gabe](https://x.com/gorlanski) and he made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies probably shouldn't get a free pass just because they aren't the main program.
 
-My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
+I did use a fixed list of folder names to exclude installed packages, virtual environments, and caches from both analyses.
 
-We measure the code left in each project's final saved version, not just the program's entrypoint. Tests, scratch scripts, and generated copies count because they're still there for someone to maintain or clean up. Installed libraries don't count: we're evaluating the project, not the packages it depends on. We use a fixed list of folder names to exclude installed packages, virtual environments, and caches from both analyses.
+The main results analyze all leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers. The rules and the actual difference are below.
 
-The main results keep the leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers without assuming those files should get a free pass. The rules and the actual difference are below.
-
-These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems, so we left those problems out for every model. A missing result doesn't mean the code is clean.
+These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems (more on that in gabe's update later), so we left those problems out for every model.
 
 ![Ten campaigns ranked from lowest to highest SLOC-weighted heuristic coverage across 28 matched problems. Opus XHigh is lowest at 77.75%; Opus Medium is highest at 94.25%, or 92.90% after filtering.](./images/scb-3-quality-slop-coverage.png)
 
-*Main score, lowest first. Filtering doesn't change the order. A flagged line isn't necessarily a broken line.*
+Some high level details on how we compute "what % of this code triggers at least one slop rule":
 
-The scanner flags code patterns and repeated code within each file. Coverage is the share of source lines flagged by those checks. We count each line only once, even if several checks flag it. A check can flag a whole function without every line being a problem. We total the flagged lines and source lines across all 28 problems, then divide to get the percentage. Larger programs therefore have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
+- The scanner flags slop patterns and repeated code within each file. 
+- "Coverage" is the share of source lines flagged by those checks. 
+- We count each line only once, even if several checks flag it.
+- A check can flag a whole function without every line being a problem. 
 
-Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium. But it passes fewer checkpoints strictly: 25 versus 28. A smaller share of its code gets flagged, but it doesn't pass more checkpoints. I'm keeping those scores separate rather than declaring an overall winner.
+We total the flagged lines and source lines across all 28 problems, then divide to get the percentage. Larger programs therefore have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
+
+Opus XHigh has the lowest slop percentage at **77.75%**, versus **94.25%** for Opus Medium. Interestingly, once again, the xhigh version has fewer strict passes: 25 versus 28.
+
+<h3><blockquote>while Opus 5.5 Medium had more strict passes, Opus 5.5. XHigh wrote code that was close to ~5x cleaner.</blockquote></h3>
+
+It is possible that this is because newer models come with new / different slop patterns, and the paper's original battery of 200+ linters is focused on a set of hand-curated patterns derived from agent-authored PRs in the months preceding the original publication in march 2026 and the v1.1 in may 2026. These new models may produce new maintainability anti-patterns that we haven't built linters for yet (more on that in Gabe's follow up post).
 
 ![Total source lines across 28 matched final problems per campaign. Opus Medium has 216,881 SLOC, including 41,265 removed by the deterministic filter, leaving 175,616.](./images/scb-3-quality-volume.png)
 
 *Opus Medium leaves the most code, even after filtering. We don't remove all tests.*
 
-For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, or `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. We use the same rules for every run. We don't guess whether code looks generated or exclude tests as a group. In these runs, the filter only removed `_work` files: **45 files and 41,265 source lines**, all from Opus Medium's final `dynamic_buffer` code. Its total drops from **216,881 to 175,616 source lines**, and coverage drops to **92.90%**. It still ranks last on coverage. The filter changes nothing for the other models.
+For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, or `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. We use the same rules for every run. We don't guess whether code looks generated or exclude tests as a group. In these runs, the filter only removed `_work` files: **45 files and 41,265 source lines**, all from Opus Medium's final `dynamic_buffer` code. Its total drops from **216,881 to 175,616 source lines**, and slop-presence drops to **92.90%**. It still ranks most-frequent on slop presence. The filter changes nothing for the other models.
 
 ![Functions and methods alongside callable-weighted mean complexity. Fable has 8,967 callables and mean complexity 3.57; GPT-6 SOL Medium has 1,083 and mean complexity 11.70.](./images/scb-3-quality-callables.png)
 
 *Fable has the lowest mean complexity, 3.57; GPT-6 SOL Medium has the highest, 11.70. Functions and methods each get one vote.*
 
-Splitting code into more helper functions can lower average complexity without making the code easier to change. Less code isn't always better either. These numbers help us see what models leave behind, but we still need to read the code and check whether it works.
+As you might expect, splitting code into more helper functions can lower average complexity without making the code easier to change. Less code isn't always better either.
+
+There's a ton more metrics and I'm excited to get Gabe's take on the more qualitative side of these outputs. 
 
 ## my takeaway
 
@@ -137,4 +146,4 @@ The full benchmark is hard in a way that matters to me: the agents get the main 
 
 We're getting better at maintaing a codebase over time (14.8% to 16.3% during may->september), but not as fast as anyone would have you believe. I think we'll be keeping the lights on for a while to come.
 
-> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
+> **NOTE:** This is Part I of our October 2026 writeup: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.

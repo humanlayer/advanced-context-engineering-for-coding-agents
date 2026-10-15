@@ -1,8 +1,12 @@
 # SlopCodeBench update 10/2026 - Opus 5.5 update, Astra improves by 1.5% over gpt-5.5, xhigh considered harmful
 
+October 15, 2026 - [Dex Horthy](https://x.com/dexhorthy) w/ contributions from [Gabe Orlanski](https://x.com/gorlanski)
+
 > **NOTE:** This is Part I of our October 2026 writeup: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
 
 > For my previous writeups on SlopcodeBench, see [benchmarking-opus-5-on-slop-code-bench.md](./benchmarking-opus-5-on-slop-code-bench.md) and [benchmarking-sol-fable-kimi-on-slop-code-bench.md](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). Both include deeper dives on the core structure of SCB and how each of its challenges is broken into checkpoints.
+
+### Overview
 
 In May, the last time SCB was published, gpt-5.5 got a **14.8% strict pass rate on slopcodebench**. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting **16.3%**. 
 

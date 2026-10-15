@@ -2,12 +2,11 @@
 
 > **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
 
-In May, gpt-5.5 got a 14.8% strict pass rate on slopcodebench. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting 16.3%. 
+> For my previous writeups on SlopcodeBench, see [benchmarking-opus-5-on-slop-code-bench.md](./benchmarking-opus-5-on-slop-code-bench.md) and [benchmarking-sol-fable-kimi-on-slop-code-bench.md](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). Both include deeper dives on the core structure of SCB and how each of its challenges is broken into checkpoints.
 
+In May, the last time SCB was published, gpt-5.5 got a **14.8% strict pass rate on slopcodebench**. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting **16.3%**. 
 
-The agents pass the Core tests at **65.8-74.0%** of checkpoints. Require every test category to pass, including regressions, and that falls to **12.2-16.3%**.
-
-That's the main result from my latest SlopCodeBench runs on: 
+While the benchmark reports several different pass rates, the one we focus on is **strict pass rate** - in how many checkpoints did the model pass every test case while still passing all regression tests the frontier models we tested here had strict pass rates in the **12.2-16.3%** range:
 
 - Opus 5.5
 - Fable 5.1
@@ -15,23 +14,23 @@ That's the main result from my latest SlopCodeBench runs on:
 - Astra
 - GLM 5.3
 
-They often get the main behavior right without getting everything right. And higher effort isn't a reliable fix: XHigh costs **2.11-4.22x** as much as Medium in the three complete pairs, and most notably, **opus 5.5 did *BETTER* on medium effort than on xhigh**
+For comparison, the benchmark also reports a "core pass rate" which is less strict, which lands in the **65.8-74.0%** pass rate for these models.
 
-Over the past few months, I ran subsets of the bench. I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. We can't use the earlier subsets to measure improvement or decline. The full benchmark lets us compare these results with the official research findings.
+One interesting thing here that I'll dig into - medium effort performed better than XHigh for some newer models. XHigh costs **2.11-4.22x** as much as Medium in the three complete pairs, and most notably, **opus 5.5 did *BETTER* on medium effort than on xhigh**
 
-## what I ran
+Over the past few months, I ran subsets of the bench. I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. Since we used a subset before, we can't use the earlier subsets to measure improvement or decline. The full benchmark lets us compare these results with the official research findings. It also means while the 30% fable 5 score from the latter of those two is interesting, its not comparable here, because it only covers 6 out of 36 problems.
+
+## quick SCB background
 
 [SlopCodeBench](https://arxiv.org/abs/2603.24755) gives a coding agent a problem in stages. It writes a program, gets new requirements, and changes the existing code. Later checkpoints test both new behavior and old behavior.
 
 ![Diagram from the SlopCodeBench paper: new requirements arrive in stages, and code quality can degrade as the agent changes its solution.](./images/scb-paper-degradation.png)
 
-Getting the next feature mostly right isn't enough if the old ones stop working.
+The idea here is that this maps more onto how software is really built - with unclear and evolving requirements during the course of the build.
 
-I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 
+For folks who want to try to repro these findings: I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 
 
-I ran each model and effort setting once. Each checkpoint builds on the code from earlier checkpoints, so these aren't 196 independent trials. Some problems have more checkpoints than others. Each checkpoint counts equally toward the pass rate, so problems with more checkpoints have more weight.
-
-The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5 Max and GPT-6.1 SOL XHigh were still ongoing; stay tuned for those results soon.
+I ran each model and effort setting once. Each checkpoint builds on the code from earlier checkpoints. Some problems have more checkpoints than others. Each checkpoint counts equally toward the pass rate, so problems with more checkpoints have more weight.
 
 ## Core vs. Strict pass rates
 
@@ -54,8 +53,6 @@ The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5
 | GPT-6 SOL XHigh | 26/196 | 13.27% | 68.37% | $517.32 |
 | Opus 5.5 XHigh | 25/196 | 12.76% | 71.94% | $817.04 |
 | GLM 5.3 XHigh | 24/196 | 12.24% | 66.33% | $365.13 |
-
-The cost records show zero dollars and zero tokens for two Fable checkpoints, even though the agent took steps to complete them. That doesn't affect its pass score, but the recorded $1,550.07 may not include its full cost.
 
 Astra XHigh has the most strict passes in this snapshot. But it's lead over SOL 6.1 Medium is only **two checkpoints**.
 
@@ -102,7 +99,9 @@ Checkpoint success also isn't the same as ending with a working program.
 | Opus 5.5 XHigh | 1 | 2,446 | 2,123 |
 | GLM 5.3 XHigh | 1 | 2,748 | 2,311 |
 
-## code quality: count what gets left behind
+## code quality findings - blurry
+
+First - the models left a ton of junk and scratch code while working. 
 
 My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
 

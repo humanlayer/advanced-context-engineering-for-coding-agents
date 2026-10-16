@@ -1,13 +1,16 @@
-# SlopCodeBench update 10/2026 - Astra improves by 1.5% over gpt-5.5, xhigh considered harmful
+# SlopCodeBench update 10/2026 - Opus 5.5 update, Astra improves by 1.5% over gpt-5.5, xhigh considered harmful
 
-> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
+October 15, 2026 - [Dex Horthy](https://x.com/dexhorthy) w/ contributions from [Gabe Orlanski](https://x.com/gorlanski)
 
-In May, gpt-5.5 got a 14.8% strict pass rate on slopcodebench. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting 16.3%. 
+> **NOTE:** This is Part I of our October 2026 writeup: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
 
+> For my previous writeups on SlopcodeBench, see [benchmarking-opus-5-on-slop-code-bench.md](./benchmarking-opus-5-on-slop-code-bench.md) and [benchmarking-sol-fable-kimi-on-slop-code-bench.md](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). Both include deeper dives on the core structure of SCB and how each of its challenges is broken into checkpoints.
 
-The agents pass the Core tests at **65.8-74.0%** of checkpoints. Require every test category to pass, including regressions, and that falls to **12.2-16.3%**.
+### Overview
 
-That's the main result from my latest SlopCodeBench runs on: 
+In May, the last time SCB was published, gpt-5.5 got a **14.8% strict pass rate on slopcodebench**. This month, I ran the frontier models through the same campaigns, and the highest scorer was gpt-6 astra, hitting **16.3%**. 
+
+While the benchmark reports several different pass rates, the one we focus on is **strict pass rate** - in how many checkpoints did the model pass every test case while still passing all regression tests the frontier models we tested here had strict pass rates in the **12.2-16.3%** range:
 
 - Opus 5.5
 - Fable 5.1
@@ -15,23 +18,23 @@ That's the main result from my latest SlopCodeBench runs on:
 - Astra
 - GLM 5.3
 
-They often get the main behavior right without getting everything right. And higher effort isn't a reliable fix: XHigh costs **2.11-4.22x** as much as Medium in the three complete pairs, and most notably, **opus 5.5 did *BETTER* on medium effort than on xhigh**
+For comparison, the benchmark also reports a "core pass rate" which is less strict, which lands in the **65.8-74.0%** pass rate for these models.
 
-Over the past few months, I ran subsets of the bench. I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. We can't use the earlier subsets to measure improvement or decline. The full benchmark lets us compare these results with the official research findings.
+One interesting thing here that I'll dig into - medium effort performed better than XHigh for some newer models. XHigh costs **2.11-4.22x** as much as Medium in the three complete pairs, and most notably, **opus 5.5 did *BETTER* on medium effort than on xhigh**
 
-## what I ran
+Over the past few months, I ran subsets of the bench. I [started with three problems](./benchmarking-opus-5-on-slop-code-bench.md), then [tried six](./benchmarking-sol-fable-kimi-on-slop-code-bench.md). This time: **36 problems and 196 checkpoints per setting**. Since we used a subset before, we can't use the earlier subsets to measure improvement or decline. The full benchmark lets us compare these results with the official research findings. It also means while the 30% fable 5 score from the latter of those two is interesting, its not comparable here, because it only covers 6 out of 36 problems.
+
+## quick SCB background
 
 [SlopCodeBench](https://arxiv.org/abs/2603.24755) gives a coding agent a problem in stages. It writes a program, gets new requirements, and changes the existing code. Later checkpoints test both new behavior and old behavior.
 
 ![Diagram from the SlopCodeBench paper: new requirements arrive in stages, and code quality can degrade as the agent changes its solution.](./images/scb-paper-degradation.png)
 
-Getting the next feature mostly right isn't enough if the old ones stop working.
+The idea here is that this maps more onto how software is really built - with unclear and evolving requirements during the course of the build.
 
-I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 
+For folks who want to try to repro these findings: I used the pinned v1.0 catalog, the stock `just-solve` prompt, seed 42, the `any-case` runner pass policy, and Docker with Python 3.12 and uv. 
 
-I ran each model and effort setting once. Each checkpoint builds on the code from earlier checkpoints, so these aren't 196 independent trials. Some problems have more checkpoints than others. Each checkpoint counts equally toward the pass rate, so problems with more checkpoints have more weight.
-
-The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5 Max and GPT-6.1 SOL XHigh were still ongoing; stay tuned for those results soon.
+I ran each model and effort setting once. Each checkpoint builds on the code from earlier checkpoints. Some problems have more checkpoints than others. Each checkpoint counts equally toward the pass rate, so problems with more checkpoints have more weight.
 
 ## Core vs. Strict pass rates
 
@@ -54,8 +57,6 @@ The snapshot is **October 4, 2026 at 03:08:58 UTC**. Fable is complete. Opus 5.5
 | GPT-6 SOL XHigh | 26/196 | 13.27% | 68.37% | $517.32 |
 | Opus 5.5 XHigh | 25/196 | 12.76% | 71.94% | $817.04 |
 | GLM 5.3 XHigh | 24/196 | 12.24% | 66.33% | $365.13 |
-
-The cost records show zero dollars and zero tokens for two Fable checkpoints, even though the agent took steps to complete them. That doesn't affect its pass score, but the recorded $1,550.07 may not include its full cost.
 
 Astra XHigh has the most strict passes in this snapshot. But it's lead over SOL 6.1 Medium is only **two checkpoints**.
 
@@ -102,35 +103,46 @@ Checkpoint success also isn't the same as ending with a working program.
 | Opus 5.5 XHigh | 1 | 2,446 | 2,123 |
 | GLM 5.3 XHigh | 1 | 2,748 | 2,311 |
 
-## code quality: count what gets left behind
+## code quality findings - blurry
 
-My first reaction was to remove the random temp files from the quality scores. But the researchers made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies don't get a free pass just because they aren't the main program.
+First - the models left a ton of junk and scratch code while working. My first reaction was to remove the random temp files from the quality scores. But I chatted with [gabe](https://x.com/gorlanski) and he made a good point: **the benchmark should measure how much garbage models leave in the codebase. If we're not reading the code, we need to measure it.** Tests, scratch code, and generated copies probably shouldn't get a free pass just because they aren't the main program.
 
-We measure the code left in each project's final saved version, not just the program's entrypoint. Tests, scratch scripts, and generated copies count because they're still there for someone to maintain or clean up. Installed libraries don't count: we're evaluating the project, not the packages it depends on. We use a fixed list of folder names to exclude installed packages, virtual environments, and caches from both analyses.
+I did use a fixed list of folder names to exclude installed packages, virtual environments, and caches from both analyses.
 
-The main results keep the leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers without assuming those files should get a free pass. The rules and the actual difference are below.
+The main results analyze all leftover code. For comparison, we also calculate the same metrics after removing a fixed list of temporary and generated files. That lets us see how much the cleanup changes the numbers. The rules and the actual difference are below.
 
-These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems, so we left those problems out for every model. A missing result doesn't mean the code is clean.
+These figures cover **the same 28 problems for all ten completed runs**, not all 36 problems. The scanner couldn't fully measure some files in eight problems (more on that in gabe's update later), so we left those problems out for every model.
 
 ![Ten campaigns ranked from lowest to highest SLOC-weighted heuristic coverage across 28 matched problems. Opus XHigh is lowest at 77.75%; Opus Medium is highest at 94.25%, or 92.90% after filtering.](./images/scb-3-quality-slop-coverage.png)
 
-*Main score, lowest first. Filtering doesn't change the order. A flagged line isn't necessarily a broken line.*
+Some high level details on how we compute "what % of this code triggers at least one slop rule":
 
-The scanner flags code patterns and repeated code within each file. Coverage is the share of source lines flagged by those checks. We count each line only once, even if several checks flag it. A check can flag a whole function without every line being a problem. We total the flagged lines and source lines across all 28 problems, then divide to get the percentage. Larger programs therefore have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
+- The scanner flags slop patterns and repeated code within each file. 
+- "Coverage" is the share of source lines flagged by those checks. 
+- We count each line only once, even if several checks flag it.
+- A check can flag a whole function without every line being a problem. 
 
-Opus XHigh has the lowest coverage at **77.75%**, versus **94.25%** for Opus Medium. But it passes fewer checkpoints strictly: 25 versus 28. A smaller share of its code gets flagged, but it doesn't pass more checkpoints. I'm keeping those scores separate rather than declaring an overall winner.
+We total the flagged lines and source lines across all 28 problems, then divide to get the percentage. Larger programs therefore have more weight. **In the earlier posts, we averaged each problem's percentage instead.**
+
+Opus XHigh has the lowest slop percentage at **77.75%**, versus **94.25%** for Opus Medium. Interestingly, once again, the xhigh version has fewer strict passes: 25 versus 28.
+
+<h3><blockquote>while Opus 5.5 Medium had more strict passes, Opus 5.5. XHigh wrote code that was close to ~5x cleaner.</blockquote></h3>
+
+It is possible that this is because newer models come with new / different slop patterns, and the paper's original battery of 200+ linters is focused on a set of hand-curated patterns derived from agent-authored PRs in the months preceding the original publication in march 2026 and the v1.1 in may 2026. These new models may produce new maintainability anti-patterns that we haven't built linters for yet (more on that in Gabe's follow up post).
 
 ![Total source lines across 28 matched final problems per campaign. Opus Medium has 216,881 SLOC, including 41,265 removed by the deterministic filter, leaving 175,616.](./images/scb-3-quality-volume.png)
 
 *Opus Medium leaves the most code, even after filtering. We don't remove all tests.*
 
-For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, or `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. We use the same rules for every run. We don't guess whether code looks generated or exclude tests as a group. In these runs, the filter only removed `_work` files: **45 files and 41,265 source lines**, all from Opus Medium's final `dynamic_buffer` code. Its total drops from **216,881 to 175,616 source lines**, and coverage drops to **92.90%**. It still ranks last on coverage. The filter changes nothing for the other models.
+For the filtered score, we leave out folders named `_work`, `tmp`, `temp`, `scratch`, `generated`, `build`, or `dist`, plus `*_pb2.py` and `*_pb2_grpc.py` files. We use the same rules for every run. We don't guess whether code looks generated or exclude tests as a group. In these runs, the filter only removed `_work` files: **45 files and 41,265 source lines**, all from Opus Medium's final `dynamic_buffer` code. Its total drops from **216,881 to 175,616 source lines**, and slop-presence drops to **92.90%**. It still ranks most-frequent on slop presence. The filter changes nothing for the other models.
 
 ![Functions and methods alongside callable-weighted mean complexity. Fable has 8,967 callables and mean complexity 3.57; GPT-6 SOL Medium has 1,083 and mean complexity 11.70.](./images/scb-3-quality-callables.png)
 
 *Fable has the lowest mean complexity, 3.57; GPT-6 SOL Medium has the highest, 11.70. Functions and methods each get one vote.*
 
-Splitting code into more helper functions can lower average complexity without making the code easier to change. Less code isn't always better either. These numbers help us see what models leave behind, but we still need to read the code and check whether it works.
+As you might expect, splitting code into more helper functions can lower average complexity without making the code easier to change. Less code isn't always better either.
+
+There's a ton more metrics and I'm excited to get Gabe's take on the more qualitative side of these outputs. 
 
 ## my takeaway
 
@@ -138,4 +150,4 @@ The full benchmark is hard in a way that matters to me: the agents get the main 
 
 We're getting better at maintaing a codebase over time (14.8% to 16.3% during may->september), but not as fast as anyone would have you believe. I think we'll be keeping the lights on for a while to come.
 
-> **NOTE:** This is Part I of our findings on recent models: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
+> **NOTE:** This is Part I of our October 2026 writeup: the Q4 state of the slop. Gabe and the [SlopCodeBench team](https://arxiv.org/abs/2603.24755) will share their analysis and a more qualitative deep dive into slop patterns in Part II.
